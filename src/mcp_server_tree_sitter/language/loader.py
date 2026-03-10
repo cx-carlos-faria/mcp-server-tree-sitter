@@ -19,9 +19,15 @@ _DATA_PACKAGE: str = "mcp_server_tree_sitter.language.data"
 
 
 class LanguageDataLoader:
-    """Loads language data from language/data/ and builds derived structures. Cache is on the class."""
+    """Loads language data from language/data/ and builds derived structures. Cache is on the class.
+    Derived structures are built once at load time; getters are accessors only.
+    """
 
     _loaded: ClassVar[Dict[str, LanguageData] | None] = None
+    _scope_node_types: ClassVar[(dict[str, dict[str, list[str]]] | None)] = None
+    _extension_map: ClassVar[(dict[str, str] | None)] = None
+    _query_templates: ClassVar[(dict[str, dict[str, str]] | None)] = None
+    _node_type_descriptions: ClassVar[(dict[str, dict[str, str]] | None)] = None
 
     @classmethod
     def _get_loaded(cls) -> Dict[str, LanguageData]:
@@ -32,21 +38,44 @@ class LanguageDataLoader:
         return cls._loaded
 
     @classmethod
+    def _populate_derived_caches(cls, loaded: Dict[str, LanguageData]) -> None:
+        """Build and cache derived structures from loaded data. Called at load time."""
+        scope: dict[str, dict[str, list[str]]] = {"function": {}, "class": {}, "module": {}}
+        for lang_id, data in loaded.items():
+            for kind, node_types in data.scope_node_types.items():
+                scope[kind][lang_id] = list(node_types)
+        cls._scope_node_types = scope
+
+        ext_map: dict[str, str] = {}
+        for data in loaded.values():
+            for ext in data.extensions:
+                ext_map[ext] = data.id
+        cls._extension_map = ext_map
+
+        cls._query_templates = {lang_id: dict(data.query_templates) for lang_id, data in loaded.items()}
+        cls._node_type_descriptions = {
+            lang_id: dict(data.node_type_descriptions) for lang_id, data in loaded.items()
+        }
+
+    @classmethod
     def load_all_language_data(cls) -> Dict[str, LanguageData]:
         """
         Import all language/data modules (so LanguageDataBase subclasses register),
         then build and return a dict mapping language id -> LanguageData. Caches on the class.
+        Also builds and caches derived structures (scope node types, extension map, etc.).
         """
         try:
             pkg: ModuleType = importlib.import_module(_DATA_PACKAGE)
         except ImportError as e:
             logger.warning("Language data package %s not importable: %s", _DATA_PACKAGE, e)
             cls._loaded = {}
+            cls._populate_derived_caches(cls._loaded)
             return {}
 
         path: list[str] | None = getattr(pkg, "__path__", None)
         if path is None:
             cls._loaded = {}
+            cls._populate_derived_caches(cls._loaded)
             return {}
 
         prefix: str = pkg.__name__ + "."
@@ -68,41 +97,36 @@ class LanguageDataLoader:
                     e,
                 )
         cls._loaded = result
+        cls._populate_derived_caches(cls._loaded)
         return result
 
     @classmethod
     def get_scope_node_types(cls) -> dict[str, dict[str, list[str]]]:
-        """
-        Build scope kind -> language id -> list of node type names (same shape as SCOPE_NODE_TYPES).
-        """
-        loaded: Dict[str, LanguageData] = cls._get_loaded()
-        result: dict[str, dict[str, list[str]]] = {"function": {}, "class": {}, "module": {}}
-        for lang_id, data in loaded.items():
-            for kind, node_types in data.scope_node_types.items():
-                result[kind][lang_id] = list(node_types)
-        return result
+        """Return scope kind -> language id -> list of node type names (cached at load time)."""
+        cls._get_loaded()
+        assert cls._scope_node_types is not None
+        return cls._scope_node_types
 
     @classmethod
     def get_extension_map(cls) -> dict[str, str]:
-        """Build file extension -> language id (for registry language_for_file)."""
-        loaded: Dict[str, LanguageData] = cls._get_loaded()
-        result: dict[str, str] = {}
-        for data in loaded.values():
-            for ext in data.extensions:
-                result[ext] = data.id
-        return result
+        """Return file extension -> language id (cached at load time)."""
+        cls._get_loaded()
+        assert cls._extension_map is not None
+        return cls._extension_map
 
     @classmethod
     def get_query_templates(cls) -> dict[str, dict[str, str]]:
-        """Build language id -> template name -> query string (same shape as QUERY_TEMPLATES)."""
-        loaded: Dict[str, LanguageData] = cls._get_loaded()
-        return {lang_id: dict(data.query_templates) for lang_id, data in loaded.items()}
+        """Return language id -> template name -> query string (cached at load time)."""
+        cls._get_loaded()
+        assert cls._query_templates is not None
+        return cls._query_templates
 
     @classmethod
     def get_node_type_descriptions(cls) -> dict[str, dict[str, str]]:
-        """Build language id -> node type -> description (for describe_node_types)."""
-        loaded: Dict[str, LanguageData] = cls._get_loaded()
-        return {lang_id: dict(data.node_type_descriptions) for lang_id, data in loaded.items()}
+        """Return language id -> node type -> description (cached at load time)."""
+        cls._get_loaded()
+        assert cls._node_type_descriptions is not None
+        return cls._node_type_descriptions
 
 
 # Public API: keep the same names so callers can import functions unchanged.
