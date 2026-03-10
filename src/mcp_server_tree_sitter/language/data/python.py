@@ -49,4 +49,20 @@ class Python(LanguageDataBase):
             right: (_) @assign.value) @assign
     """,
     }
-    node_type_descriptions = {}
+    node_type_descriptions = {
+        "module": "The root node of a Python file",
+        "function_definition": "A function definition with name and params",
+        "class_definition": "A class definition with name and body",
+        "import_statement": "An import statement",
+        "import_from_statement": "A from ... import ... statement",
+        "assignment": "An assignment statement",
+        "call": "A function call with function name and arguments",
+        "identifier": "An identifier (name)",
+        "string": "A string literal",
+        "integer": "An integer literal",
+        "float": "A floating-point literal",
+        "block": "A block of code (indented statements)",
+        "if_statement": "An if statement with condition and body",
+        "for_statement": "A for loop with target, iterable, and body",
+        "while_statement": "A while loop with condition and body",
+    }

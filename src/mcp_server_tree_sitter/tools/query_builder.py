@@ -130,50 +130,15 @@ def describe_node_types(language: str) -> Dict[str, str]:
     """
     Get descriptions of common node types for a language.
 
+    Data is loaded from per-language data (language/data/) via the loader.
+
     Args:
         language: Language identifier
 
     Returns:
         Dictionary of node type -> description
     """
-    # This would ideally be generated from tree-sitter grammar definitions
-    descriptions = {
-        "python": {
-            "module": "The root node of a Python file",
-            "function_definition": "A function definition with name and params",
-            # Shortened for line length
-            "class_definition": "A class definition with name and body",
-            "import_statement": "An import statement",
-            "import_from_statement": "A from ... import ... statement",
-            "assignment": "An assignment statement",
-            "call": "A function call with function name and arguments",
-            "identifier": "An identifier (name)",
-            "string": "A string literal",
-            "integer": "An integer literal",
-            "float": "A floating-point literal",
-            "block": "A block of code (indented statements)",
-            "if_statement": "An if statement with condition and body",
-            "for_statement": "A for loop with target, iterable, and body",
-            "while_statement": "A while loop with condition and body",
-        },
-        "javascript": {
-            "program": "The root node of a JavaScript file",
-            "function_declaration": "A function declaration with name and params",
-            "arrow_function": "An arrow function with parameters and body",
-            "class_declaration": "A class declaration with name and body",
-            "import_statement": "An import statement",
-            "export_statement": "An export statement",
-            "variable_declaration": "A variable declaration",
-            "call_expression": "A function call with function and arguments",
-            "identifier": "An identifier (name)",
-            "string": "A string literal",
-            "number": "A numeric literal",
-            "statement_block": "A block of statements",
-            "if_statement": "An if statement with condition and consequence",
-            "for_statement": "A for loop",
-            "while_statement": "A while loop with condition and body",
-        },
-        # Add more languages...
-    }
+    from ..language.loader import get_node_type_descriptions
 
+    descriptions = get_node_type_descriptions()
     return descriptions.get(language, {})
