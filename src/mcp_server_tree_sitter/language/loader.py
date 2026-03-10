@@ -3,6 +3,9 @@
 Subclasses of LanguageDataBase register themselves when defined. LanguageDataLoader
 imports all modules in the data package (so classes are created), then builds
 LanguageData from the registry. Derived structures are built from the cached load.
+
+Public API (stable): load_all_language_data, get_scope_node_types, get_extension_map,
+get_query_templates, get_node_type_descriptions, get_query_adaptation_map.
 """
 
 import importlib
