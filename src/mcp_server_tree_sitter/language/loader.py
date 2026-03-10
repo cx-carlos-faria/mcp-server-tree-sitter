@@ -57,9 +57,7 @@ class LanguageDataLoader:
         cls._extension_map = ext_map
 
         cls._query_templates = {lang_id: dict(data.query_templates) for lang_id, data in loaded.items()}
-        cls._node_type_descriptions = {
-            lang_id: dict(data.node_type_descriptions) for lang_id, data in loaded.items()
-        }
+        cls._node_type_descriptions = {lang_id: dict(data.node_type_descriptions) for lang_id, data in loaded.items()}
 
     @classmethod
     def load_all_language_data(cls) -> Dict[str, LanguageData]:

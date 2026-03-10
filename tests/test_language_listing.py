@@ -93,14 +93,14 @@ def test_fallback_extension_overwritten_by_language_data_warns(caplog: pytest.Lo
 
     # When an extension from fallback is already set by language data, we skip it and warn
     fallback_overwrite_warnings = [
-        r
-        for r in caplog.records
-        if "already set by language data" in r.message and "fallback" in r.message
+        r for r in caplog.records if "already set by language data" in r.message and "fallback" in r.message
     ]
     assert len(fallback_overwrite_warnings) >= 1, (
         "Expected a warning when fallback extension is overwritten by language data"
     )
-    assert any("rb" in r.message for r in fallback_overwrite_warnings), "Warning should mention the overlapping extension (rb)"
+    assert any("rb" in r.message for r in fallback_overwrite_warnings), (
+        "Warning should mention the overlapping extension (rb)"
+    )
 
 
 if __name__ == "__main__":
