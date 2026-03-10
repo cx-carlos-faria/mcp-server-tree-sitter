@@ -16,9 +16,6 @@ from mcp_server_tree_sitter.api import (
 from mcp_server_tree_sitter.api import (
     list_projects as api_list_projects,
 )
-from mcp_server_tree_sitter.tools.project import (
-    register_project as api_register_project,
-)
 from mcp_server_tree_sitter.api import (
     remove_project as api_remove_project,
 )
@@ -40,6 +37,9 @@ from mcp_server_tree_sitter.tools.file_operations import (
     get_file_content,
     get_file_info,
     list_project_files,
+)
+from mcp_server_tree_sitter.tools.project import (
+    register_project as api_register_project,
 )
 from mcp_server_tree_sitter.tools.query_builder import (
     adapt_query_for_language,

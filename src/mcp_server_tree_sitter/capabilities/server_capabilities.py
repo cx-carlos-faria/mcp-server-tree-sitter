@@ -1,7 +1,7 @@
 """Server capability declarations for MCP integration."""
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, cast
 
 from mcp.server import FastMCP
 
@@ -153,6 +153,8 @@ def register_capabilities(mcp_server: FastMCP) -> None:
         return {"suggestions": suggestions}
 
     # Ensure capabilities are accessible to tests
-    if hasattr(mcp_server, "capabilities"):
-        mcp_server.capabilities["logging"] = handle_logging
-        mcp_server.capabilities["completion"] = handle_completion
+    caps = getattr(mcp_server, "capabilities", None)
+    if caps is not None:
+        mutable_caps = cast(Dict[str, Any], caps)
+        mutable_caps["logging"] = handle_logging
+        mutable_caps["completion"] = handle_completion

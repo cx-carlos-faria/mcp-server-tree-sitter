@@ -2,10 +2,12 @@
 
 import os
 from collections import Counter, defaultdict
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from ..exceptions import SecurityError
 from ..language.query_templates import get_query_template
+from ..language.registry import LanguageRegistry
+from ..models.project import Project
 from ..utils.context import MCPContext
 from ..utils.file_io import get_comment_prefix, read_text_file
 from ..utils.security import validate_file_access
@@ -16,12 +18,13 @@ from ..utils.tree_sitter_helpers import (
     parse_with_cached_tree,
     run_query_captures,
 )
+from ..utils.tree_sitter_types import Node, Tree
 
 
 def extract_symbols(
-    project: Any,
+    project: Project,
     file_path: str,
-    language_registry: Any,
+    language_registry: LanguageRegistry,
     symbol_types: Optional[List[str]] = None,
     exclude_class_methods: bool = False,
 ) -> Dict[str, List[Dict[str, Any]]]:
@@ -234,11 +237,11 @@ def extract_symbols(
 
 
 def process_symbol_matches(
-    matches: Any,
+    matches: Union[Dict[str, List[Node]], List[Any]],
     symbol_type: str,
     symbols_dict: Dict[str, List[Dict[str, Any]]],
     source_bytes: bytes,
-    tree: Any,
+    tree: Tree,
     class_ranges: Optional[List[Tuple[int, int]]] = None,
 ) -> None:
     """
@@ -266,7 +269,7 @@ def process_symbol_matches(
     filtered_methods: List[int] = []
 
     # Helper function to process a single node into a symbol
-    def process_node(node: Any, capture_name: str) -> None:
+    def process_node(node: Node, capture_name: str) -> None:
         try:
             safe_node = ensure_node(node)
 
@@ -386,7 +389,10 @@ def process_symbol_matches(
 
 
 def analyze_project_structure(
-    project: Any, language_registry: Any, scan_depth: int = 3, mcp_ctx: Optional[Any] = None
+    project: Project,
+    language_registry: LanguageRegistry,
+    scan_depth: int = 3,
+    mcp_ctx: Optional[Any] = None,
 ) -> Dict[str, Any]:
     """
     Analyze the overall structure of a project.
@@ -565,9 +571,9 @@ def analyze_project_structure(
 
 
 def find_dependencies(
-    project: Any,
+    project: Project,
     file_path: str,
-    language_registry: Any,
+    language_registry: LanguageRegistry,
 ) -> Dict[str, List[str]]:
     """
     Find dependencies of a file.
@@ -614,7 +620,7 @@ def find_dependencies(
         module_imports: Set[str] = set()
 
         # Helper function to process an import node
-        def process_import_node(node: Any, capture_name: str) -> None:
+        def process_import_node(node: Node, capture_name: str) -> None:
             try:
                 safe_node = ensure_node(node)
                 text = get_node_text(safe_node, source_bytes)
@@ -754,9 +760,9 @@ def find_dependencies(
 
 
 def analyze_code_complexity(
-    project: Any,
+    project: Project,
     file_path: str,
-    language_registry: Any,
+    language_registry: LanguageRegistry,
 ) -> Dict[str, Any]:
     """
     Analyze code complexity.
@@ -843,7 +849,7 @@ def analyze_code_complexity(
             # Count decision points
             decision_types = complexity_nodes[language]
 
-            def count_nodes(node: Any, types: List[str]) -> int:
+            def count_nodes(node: Node, types: List[str]) -> int:
                 safe_node = ensure_node(node)
                 count = 0
                 if safe_node.type in types:
