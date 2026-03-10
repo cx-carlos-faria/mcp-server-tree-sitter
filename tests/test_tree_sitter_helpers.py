@@ -1,7 +1,7 @@
 """Tests for tree_sitter_helpers.py module."""
 
 from pathlib import Path
-from typing import Any, Dict, cast
+from typing import Any, Dict
 
 import pytest
 
@@ -367,26 +367,17 @@ def test_find_all_descendants(parsed_files) -> None:
 
 # Test edge cases and error handling
 def test_get_node_text_with_invalid_byte_range(parsed_files) -> None:
-    """Test get_node_text with invalid byte range."""
-    # Only source is needed for this test
-    py_source = parsed_files["python"]["source"]
+    """Test get_node_text when node's byte range is beyond the provided source."""
+    py_tree = parsed_files["python"]["tree"]
 
-    # Create a node with an invalid byte range by modifying properties
-    # This is a bit of a hack, but it's effective for testing error handling
-    class MockNode:
-        def __init__(self) -> None:
-            self.start_byte = len(py_source) + 100  # Beyond source length
-            self.end_byte = len(py_source) + 200
-            self.type = "invalid"
-            self.start_point = (999, 0)
-            self.end_point = (999, 10)
-            self.is_named = True
+    # Use a real node and pass source shorter than the node's range so the
+    # slice is out of range (e.g. empty source).
+    node = py_tree.root_node
+    empty_source = b""
 
-    # Create mock node and try to get text (cast: mock has start_byte/end_byte for the helper)
-    mock_node = MockNode()
-    result = get_node_text(cast(Any, mock_node), py_source, decode=False)
+    result = get_node_text(node, empty_source, decode=False)
 
-    # Should return empty bytes for invalid range
+    # Should return empty bytes when range is beyond source length
     assert result == b""
 
 

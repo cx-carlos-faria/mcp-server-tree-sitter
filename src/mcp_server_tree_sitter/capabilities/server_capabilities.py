@@ -3,10 +3,12 @@
 import logging
 from typing import Any, Dict, List
 
+from mcp.server import FastMCP
+
 logger = logging.getLogger(__name__)
 
 
-def register_capabilities(mcp_server: Any) -> None:
+def register_capabilities(mcp_server: FastMCP) -> None:
     """
     Register MCP server capabilities.
 

@@ -16,7 +16,7 @@ from mcp_server_tree_sitter.api import (
 from mcp_server_tree_sitter.api import (
     list_projects as api_list_projects,
 )
-from mcp_server_tree_sitter.api import (
+from mcp_server_tree_sitter.tools.project import (
     register_project as api_register_project,
 )
 from mcp_server_tree_sitter.api import (
