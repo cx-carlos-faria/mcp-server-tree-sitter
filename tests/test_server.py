@@ -69,13 +69,13 @@ def mock_container():
     return container
 
 
-def test_mcp_server_initialized():
+def test_mcp_server_initialized() -> None:
     """Test that the MCP server is initialized with the correct name."""
     assert mcp is not None
     assert mcp.name == "tree_sitter"
 
 
-def test_configure_with_context_basic(mock_container):
+def test_configure_with_context_basic(mock_container) -> None:
     """Test basic configuration with no specific settings."""
     # Call configure_with_context with only the container
     config_dict, config = configure_with_context(mock_container)
@@ -93,7 +93,7 @@ def test_configure_with_context_basic(mock_container):
     assert "log_level" in config_dict
 
 
-def test_configure_with_context_cache_enabled(mock_container):
+def test_configure_with_context_cache_enabled(mock_container) -> None:
     """Test configuration with cache_enabled setting."""
     # Call configure_with_context with cache_enabled=False
     config_dict, config = configure_with_context(mock_container, cache_enabled=False)
@@ -105,7 +105,7 @@ def test_configure_with_context_cache_enabled(mock_container):
     mock_container.tree_cache.set_enabled.assert_called_with(False)
 
 
-def test_configure_with_context_max_file_size(mock_container):
+def test_configure_with_context_max_file_size(mock_container) -> None:
     """Test configuration with max_file_size_mb setting."""
     # Call configure_with_context with max_file_size_mb=20
     config_dict, config = configure_with_context(mock_container, max_file_size_mb=20)
@@ -114,7 +114,7 @@ def test_configure_with_context_max_file_size(mock_container):
     mock_container.config_manager.update_value.assert_called_with("security.max_file_size_mb", 20)
 
 
-def test_configure_with_context_log_level(mock_container):
+def test_configure_with_context_log_level(mock_container) -> None:
     """Test configuration with log_level setting."""
     # Call configure_with_context with log_level="DEBUG"
     with patch("logging.getLogger") as mock_get_logger:
@@ -147,7 +147,7 @@ def test_configure_with_context_log_level(mock_container):
     mock_root_logger.setLevel.assert_called_with(logging.DEBUG)
 
 
-def test_configure_with_context_config_path(mock_container):
+def test_configure_with_context_config_path(mock_container) -> None:
     """Test configuration with config_path setting."""
     # Create a temporary YAML file
     with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as temp_file:
@@ -174,7 +174,7 @@ cache:
         os.unlink(config_path)
 
 
-def test_configure_with_context_nonexistent_config_path(mock_container):
+def test_configure_with_context_nonexistent_config_path(mock_container) -> None:
     """Test configuration with a nonexistent config path."""
     # Use a path that definitely doesn't exist
     config_path = "/nonexistent/config.yaml"
@@ -186,7 +186,7 @@ def test_configure_with_context_nonexistent_config_path(mock_container):
     mock_container.config_manager.load_from_file.assert_called_with(os.path.abspath(config_path))
 
 
-def test_main():
+def test_main() -> None:
     """Test that main function can be called without errors.
 
     This is a simplified test that just checks that the function can be

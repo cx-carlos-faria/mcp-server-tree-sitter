@@ -28,7 +28,7 @@ class ServerContext:
         project_registry: Optional[ProjectRegistry] = None,
         language_registry: Optional[LanguageRegistry] = None,
         tree_cache: Optional[TreeCache] = None,
-    ):
+    ) -> None:
         """
         Initialize with optional components.
 

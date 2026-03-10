@@ -55,7 +55,7 @@ _CURRENT_TEST: Dict[str, Any] = {}
 class DiagnosticData:
     """Container for diagnostic information."""
 
-    def __init__(self, test_id: str):
+    def __init__(self, test_id: str) -> None:
         """Initialize with test ID."""
         self.test_id = test_id
         self.start_time = time.time()

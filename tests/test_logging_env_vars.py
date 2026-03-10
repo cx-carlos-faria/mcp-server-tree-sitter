@@ -50,7 +50,7 @@ def capture_logs(logger_name="mcp_server_tree_sitter"):
         logger.propagate = original_propagate
 
 
-def test_get_log_level_from_env():
+def test_get_log_level_from_env() -> None:
     """Test that log level is correctly retrieved from environment variables."""
     # Test with DEBUG level
     with patch.dict(os.environ, {"MCP_TS_LOG_LEVEL": "DEBUG"}):
@@ -78,7 +78,7 @@ def test_get_log_level_from_env():
         assert level == logging.DEBUG, "Should handle lowercase level names"
 
 
-def test_update_log_levels():
+def test_update_log_levels() -> None:
     """Test that update_log_levels correctly sets levels on root logger and handlers."""
     # Set up test environment
     root_logger = logging.getLogger("mcp_server_tree_sitter")
@@ -141,7 +141,7 @@ def test_update_log_levels():
         child_logger.setLevel(original_child_level)
 
 
-def test_env_var_affects_logging(monkeypatch):
+def test_env_var_affects_logging(monkeypatch) -> None:
     """Test that MCP_TS_LOG_LEVEL environment variable affects logging behavior."""
     # Set environment variable to DEBUG
     monkeypatch.setenv("MCP_TS_LOG_LEVEL", "DEBUG")

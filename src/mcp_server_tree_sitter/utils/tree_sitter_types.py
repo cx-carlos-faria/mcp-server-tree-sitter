@@ -5,7 +5,7 @@ the tree-sitter library to ensure type safety with or without
 the library installed.
 """
 
-from typing import Any, Protocol, TypeVar, cast
+from typing import Any, Protocol, TypeVar
 
 
 # Define protocols for tree-sitter types
@@ -197,34 +197,44 @@ except ImportError:
             return DummyNode()
 
     # Export dummy types for type checking (mypy: conditional assignment)
-    Language = DummyLanguage  # type: ignore[assignment,misc]
-    Parser = DummyParser  # type: ignore[assignment,misc]
-    Tree = DummyTree  # type: ignore[assignment,misc]
-    Node = DummyNode  # type: ignore[assignment,misc]
-    TreeCursor = DummyTreeCursor  # type: ignore[assignment,misc]
+    Language = DummyLanguage
+    Parser = DummyParser
+    Tree = DummyTree
+    Node = DummyNode
+    TreeCursor = DummyTreeCursor
 
 
 # Helper function to safely cast to tree-sitter types
 def ensure_language(obj: Any) -> "Language":
     """Safely cast to Language type."""
-    return cast(Language, obj)
+    if not isinstance(obj, Language):
+        raise TypeError(f"Expected Language type, got {type(obj).__name__}")
+    return obj
 
 
 def ensure_parser(obj: Any) -> "Parser":
     """Safely cast to Parser type."""
-    return cast(Parser, obj)
+    if not isinstance(obj, Parser):
+        raise TypeError(f"Expected Parser type, got {type(obj).__name__}")
+    return obj
 
 
 def ensure_tree(obj: Any) -> "Tree":
     """Safely cast to Tree type."""
-    return cast(Tree, obj)
+    if not isinstance(obj, Tree):
+        raise TypeError(f"Expected Tree type, got {type(obj).__name__}")
+    return obj
 
 
 def ensure_node(obj: Any) -> "Node":
     """Safely cast to Node type."""
-    return cast(Node, obj)
+    if not isinstance(obj, Node):
+        raise TypeError(f"Expected Node type, got {type(obj).__name__}")
+    return obj
 
 
 def ensure_cursor(obj: Any) -> "TreeCursor":
     """Safely cast to TreeCursor type."""
-    return cast(TreeCursor, obj)
+    if not isinstance(obj, TreeCursor):
+        raise TypeError(f"Expected TreeCursor type, got {type(obj).__name__}")
+    return obj

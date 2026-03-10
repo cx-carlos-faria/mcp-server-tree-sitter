@@ -81,7 +81,7 @@ def test_project():
         yield {"name": project_name, "path": str(project_path), "file": "test.py"}
 
 
-def test_log_level_setting(test_project):
+def test_log_level_setting(test_project) -> None:
     """Test that log_level setting controls logging verbosity."""
     # Root logger for the package
     logger_name = "mcp_server_tree_sitter"
@@ -140,7 +140,7 @@ def test_log_level_setting(test_project):
         container.config_manager.update_value("log_level", original_log_level)
 
 
-def test_log_level_in_yaml_config():
+def test_log_level_in_yaml_config() -> None:
     """Test that log_level can be configured via YAML."""
     # Create a temporary YAML file
     with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w+", delete=False) as temp_file:

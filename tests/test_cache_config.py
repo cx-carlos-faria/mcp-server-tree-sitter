@@ -42,7 +42,7 @@ def test_project():
         yield {"name": project_name, "path": str(project_path)}
 
 
-def test_cache_max_size_setting(test_project):
+def test_cache_max_size_setting(test_project) -> None:
     """Test that cache.max_size_mb limits the cache size."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()
@@ -82,7 +82,7 @@ def test_cache_max_size_setting(test_project):
         assert cache_size < 5, "Cache should have evicted some entries"
 
 
-def test_cache_ttl_setting(test_project):
+def test_cache_ttl_setting(test_project) -> None:
     """Test that cache.ttl_seconds controls cache entry lifetime."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()
@@ -115,7 +115,7 @@ def test_cache_ttl_setting(test_project):
         assert cached_after is None, "Entry should be removed after TTL"
 
 
-def test_cache_eviction_policy(test_project):
+def test_cache_eviction_policy(test_project) -> None:
     """Test that the cache evicts oldest entries first when full."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()

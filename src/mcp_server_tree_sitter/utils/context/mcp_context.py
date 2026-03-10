@@ -12,7 +12,7 @@ T = TypeVar("T")
 class ProgressScope:
     """Scope for tracking progress of an operation."""
 
-    def __init__(self, context: "MCPContext", total: int, description: str):
+    def __init__(self, context: "MCPContext", total: int, description: str) -> None:
         """
         Initialize a progress scope.
 
@@ -52,7 +52,7 @@ class ProgressScope:
 class MCPContext:
     """Context for MCP operations with progress reporting."""
 
-    def __init__(self, ctx: Optional[Any] = None):
+    def __init__(self, ctx: Optional[Any] = None) -> None:
         """
         Initialize context with optional MCP context.
 

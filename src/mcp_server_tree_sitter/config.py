@@ -199,7 +199,7 @@ def _convert_value(value_str: str, current_value: Any) -> Any:
 class ConfigurationManager:
     """Manages server configuration without relying on global variables."""
 
-    def __init__(self, initial_config: Optional[ServerConfig] = None):
+    def __init__(self, initial_config: Optional[ServerConfig] = None) -> None:
         """Initialize with optional initial configuration."""
         self._config = initial_config or ServerConfig()
         self._logger = logging.getLogger(__name__)

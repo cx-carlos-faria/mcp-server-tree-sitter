@@ -35,7 +35,7 @@ def test_project():
         yield {"name": project_name, "path": str(project_path), "file": "test.py"}
 
 
-def test_cache_enabled_setting(test_project):
+def test_cache_enabled_setting(test_project) -> None:
     """Test that cache.enabled controls caching behavior."""
     # No need to get project registry, project object, or file path here
 
@@ -130,7 +130,7 @@ def test_cache_enabled_setting(test_project):
             tree_cache.put = original_put
 
 
-def test_security_file_size_limit(test_project):
+def test_security_file_size_limit(test_project) -> None:
     """Test that security.max_file_size_mb prevents processing large files."""
     # Create a larger file
     large_file_path = Path(test_project["path"]) / "large.py"
@@ -160,7 +160,7 @@ def test_security_file_size_limit(test_project):
         assert "tree" in result
 
 
-def test_excluded_dirs_setting(test_project):
+def test_excluded_dirs_setting(test_project) -> None:
     """Test that security.excluded_dirs prevents access to excluded directories."""
     # Create a directory structure with an excluded dir
     secret_dir = Path(test_project["path"]) / ".secret"
@@ -188,7 +188,7 @@ def test_excluded_dirs_setting(test_project):
         assert "tree" in result
 
 
-def test_default_max_depth_setting(test_project):
+def test_default_max_depth_setting(test_project) -> None:
     """Test that language.default_max_depth controls AST traversal depth."""
     # Create a file with nested structure
     nested_file = Path(test_project["path"]) / "nested.py"
