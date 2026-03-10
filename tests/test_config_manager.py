@@ -42,7 +42,7 @@ def test_config_manager_initialization() -> None:
     assert config.language.default_max_depth == 5
 
 
-def test_config_manager_load_from_file(temp_yaml_file) -> None:
+def test_config_manager_load_from_file(temp_yaml_file: str) -> None:
     """Test loading configuration from a file."""
     # This test will fail until we implement ConfigurationManager
     from mcp_server_tree_sitter.config import ConfigurationManager
@@ -89,7 +89,7 @@ def test_config_manager_to_dict() -> None:
     assert config_dict["cache"]["max_size_mb"] == 100
 
 
-def test_env_overrides_defaults(monkeypatch) -> None:
+def test_env_overrides_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     """Environment variables should override hard-coded defaults."""
     monkeypatch.setenv("MCP_TS_CACHE_MAX_SIZE_MB", "512")
 
@@ -104,7 +104,7 @@ def test_env_overrides_defaults(monkeypatch) -> None:
     assert cfg.language.default_max_depth == 5
 
 
-def test_env_overrides_yaml(temp_yaml_file, monkeypatch) -> None:
+def test_env_overrides_yaml(temp_yaml_file: str, monkeypatch: pytest.MonkeyPatch) -> None:
     """Environment variables should take precedence over YAML values."""
     # YAML sets 256; env var must win with 1024
     monkeypatch.setenv("MCP_TS_CACHE_MAX_SIZE_MB", "1024")

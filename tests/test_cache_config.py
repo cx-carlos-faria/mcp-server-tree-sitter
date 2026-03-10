@@ -3,6 +3,7 @@
 import tempfile
 import time
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -42,7 +43,7 @@ def test_project():
         yield {"name": project_name, "path": str(project_path)}
 
 
-def test_cache_max_size_setting(test_project) -> None:
+def test_cache_max_size_setting(test_project: dict[str, Any]) -> None:
     """Test that cache.max_size_mb limits the cache size."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()
@@ -82,7 +83,7 @@ def test_cache_max_size_setting(test_project) -> None:
         assert cache_size < 5, "Cache should have evicted some entries"
 
 
-def test_cache_ttl_setting(test_project) -> None:
+def test_cache_ttl_setting(test_project: dict[str, Any]) -> None:
     """Test that cache.ttl_seconds controls cache entry lifetime."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()
@@ -115,7 +116,7 @@ def test_cache_ttl_setting(test_project) -> None:
         assert cached_after is None, "Entry should be removed after TTL"
 
 
-def test_cache_eviction_policy(test_project) -> None:
+def test_cache_eviction_policy(test_project: dict[str, Any]) -> None:
     """Test that the cache evicts oldest entries first when full."""
     # Clear cache to start fresh
     tree_cache = get_tree_cache()
@@ -142,7 +143,7 @@ def test_cache_eviction_policy(test_project) -> None:
         # Override the cache's get method to track access
         original_get = tree_cache.get
 
-        def tracked_get(file_path, language):
+        def tracked_get(file_path: Path, language: str) -> Any:
             # Track access
             key = f"{file_path.name}"
             if key not in access_order:
