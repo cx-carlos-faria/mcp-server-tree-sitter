@@ -81,6 +81,8 @@ def adapt_query_for_language(query: str, from_language: str, to_language: str) -
     """
     Try to adapt a query from one language to another.
 
+    Node-type mappings are loaded from language/data/query_adaptation.py via the loader.
+
     Args:
         query: Original query
         from_language: Source language
@@ -88,41 +90,15 @@ def adapt_query_for_language(query: str, from_language: str, to_language: str) -
 
     Returns:
         Adapted query string
-
-    Note:
-        This is a simplified implementation that assumes similar node types.
-        A real implementation would need language-specific translations.
     """
-    translations = {
-        # Python -> JavaScript
-        ("python", "javascript"): {
-            "function_definition": "function_declaration",
-            "class_definition": "class_declaration",
-            "block": "statement_block",
-            "parameters": "formal_parameters",
-            "argument_list": "arguments",
-            "import_statement": "import_statement",
-            "call": "call_expression",
-        },
-        # JavaScript -> Python
-        ("javascript", "python"): {
-            "function_declaration": "function_definition",
-            "class_declaration": "class_definition",
-            "statement_block": "block",
-            "formal_parameters": "parameters",
-            "arguments": "argument_list",
-            "call_expression": "call",
-        },
-        # Add more language pairs...
-    }
+    from ..language.loader import get_query_adaptation_map
 
+    translations = get_query_adaptation_map()
     pair = (from_language, to_language)
     if pair in translations:
         trans_dict = translations[pair]
         for src, dst in trans_dict.items():
-            # Simple string replacement
             query = query.replace(f"({src}", f"({dst}")
-
     return query
 
 

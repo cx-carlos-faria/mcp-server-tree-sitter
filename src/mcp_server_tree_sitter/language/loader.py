@@ -28,6 +28,7 @@ class LanguageDataLoader:
     _extension_map: ClassVar[(dict[str, str] | None)] = None
     _query_templates: ClassVar[(dict[str, dict[str, str]] | None)] = None
     _node_type_descriptions: ClassVar[(dict[str, dict[str, str]] | None)] = None
+    _query_adaptation: ClassVar[(dict[tuple[str, str], dict[str, str]] | None)] = None
 
     @classmethod
     def _get_loaded(cls) -> Dict[str, LanguageData]:
@@ -128,6 +129,18 @@ class LanguageDataLoader:
         assert cls._node_type_descriptions is not None
         return cls._node_type_descriptions
 
+    @classmethod
+    def get_query_adaptation_map(cls) -> dict[tuple[str, str], dict[str, str]]:
+        """Return (from_lang, to_lang) -> { node_type -> node_type } for query adaptation (cached)."""
+        if cls._query_adaptation is None:
+            try:
+                mod = importlib.import_module(f"{_DATA_PACKAGE}.query_adaptation")
+                cls._query_adaptation = getattr(mod, "QUERY_ADAPTATION", {})
+            except Exception as e:
+                logger.warning("Could not load query adaptation data: %s", e)
+                cls._query_adaptation = {}
+        return cls._query_adaptation
+
 
 # Public API: keep the same names so callers can import functions unchanged.
 def load_all_language_data() -> Dict[str, LanguageData]:
@@ -153,3 +166,8 @@ def get_query_templates() -> dict[str, dict[str, str]]:
 def get_node_type_descriptions() -> dict[str, dict[str, str]]:
     """Build node type descriptions by language. See LanguageDataLoader.get_node_type_descriptions."""
     return LanguageDataLoader.get_node_type_descriptions()
+
+
+def get_query_adaptation_map() -> dict[tuple[str, str], dict[str, str]]:
+    """Return query adaptation map (from_lang, to_lang) -> node_type mapping."""
+    return LanguageDataLoader.get_query_adaptation_map()
