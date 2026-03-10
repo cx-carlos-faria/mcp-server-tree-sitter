@@ -1,15 +1,13 @@
 # Per-language data directory
 
-One **Python module per supported language** lives here. Each module is loaded at startup and must conform to the `LanguageData` Pydantic model in `language/schema.py`.
+One **Python module per supported language** lives here. Each module defines a class that subclasses `LanguageDataBase` in `language/schema.py`; the loader discovers these modules and builds validated `LanguageData` from them at startup.
 
 ## Layout
 
 - **One file per language**, named by language id: `python.py`, `javascript.py`, `csharp.py`, etc.
-- Each module must expose a **single instance** that validates as `LanguageData`:
-  - Either a variable named `LANG_DATA` (a dict that will be validated with `LanguageData.model_validate(...)`), or
-  - A variable named `DATA` of type `LanguageData` (already instantiated).
+- Each module defines a **class** that subclasses `LanguageDataBase` and sets class attributes: `id`, `extensions`, `scope_node_types`, `query_templates`, and optionally `node_type_descriptions`. The loader calls `to_language_data()` to validate and build a `LanguageData` instance.
 
-## Required structure (LanguageData)
+## Required structure (LanguageDataBase class attributes)
 
 | Field                    | Type           | Required  | Description                                                                                            |
 |--------------------------|----------------|-----------|--------------------------------------------------------------------------------------------------------|
@@ -21,13 +19,13 @@ One **Python module per supported language** lives here. Each module is loaded a
 
 ## Convention
 
-- **File name** must match `id` (e.g. `id: "python"` → `python.py`). The loader will discover modules in this package and validate each.
+- **File name** should match `id` (e.g. `id: "python"` → `python.py`). The loader discovers all modules in this package via `pkgutil.iter_modules` and registers each `LanguageDataBase` subclass.
 - **Scope kinds** must be exactly `function`, `class`, `module` (see `ScopeKind` in `scope_node_types.py`).
-- **No executable logic** in these files; they are data only. Keep them as pure dicts or a single `LanguageData` instance.
+- Keep modules as data only: class attributes and no executable logic beyond the class definition.
 
 ## Adding a new language
 
 1. Add a new module `language/data/<lang_id>.py`.
-2. Define data that conforms to `LanguageData` (e.g. a dict assigned to `LANG_DATA`).
-3. Ensure the loader is updated to import the new module (or use discovery so no change is needed).
+2. Define a class that subclasses `LanguageDataBase` and set the required (and optional) class attributes. Copy an existing file (e.g. `python.py`) and adapt to the grammar.
+3. No separate registration step is needed; the loader imports all modules in this package and uses `LanguageDataBase.registered_subclasses()`.
 4. Run tests and linting.
