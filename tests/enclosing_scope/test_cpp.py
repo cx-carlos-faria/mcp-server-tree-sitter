@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on C++."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -37,7 +38,7 @@ int bar() {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_cpp(self, tmp_path: Path):
+    def project_with_multi_scope_cpp(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "main.cpp"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_CPP, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_cpp_test", description="C++ enclosing scope")
@@ -77,7 +78,7 @@ int bar() {
         assert_scope_is_function(scope, "~Box()", "delete", row=8)
 
     @pytest.fixture
-    def project_with_constructor_destructor_cpp(self, tmp_path: Path):
+    def project_with_constructor_destructor_cpp(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """class Box {
 public:
     int n;

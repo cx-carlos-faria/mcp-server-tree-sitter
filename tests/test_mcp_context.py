@@ -9,7 +9,7 @@ from mcp_server_tree_sitter.utils.context.mcp_context import MCPContext, Progres
 
 
 @pytest.fixture
-def mock_mcp_context():
+def mock_mcp_context() -> Any:
     """Create a mock MCP context."""
     ctx = MagicMock()
     ctx.report_progress = MagicMock()

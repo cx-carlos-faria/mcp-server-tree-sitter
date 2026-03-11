@@ -1,6 +1,7 @@
 """Helper functions for tests using the new dependency injection pattern."""
 
 import logging
+from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional
 
@@ -50,7 +51,7 @@ from mcp_server_tree_sitter.tools.search import query_code, search_text
 
 
 @contextmanager
-def temp_config(**kwargs):
+def temp_config(**kwargs: Any) -> Generator[None, None, None]:
     """
     Context manager for temporarily changing configuration settings.
 

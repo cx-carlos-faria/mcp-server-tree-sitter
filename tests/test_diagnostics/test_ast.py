@@ -1,6 +1,7 @@
 """Example of using pytest with diagnostic plugin for testing."""
 
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
@@ -15,7 +16,7 @@ pytest.importorskip("mcp_server_tree_sitter.testing")
 
 
 @pytest.fixture
-def test_project():
+def test_project() -> Generator[dict[str, Any], None, None]:
     """Create a temporary test project with a sample file."""
     # Set up a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:

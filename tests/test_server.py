@@ -14,7 +14,7 @@ from mcp_server_tree_sitter.server import configure_with_context, main, mcp
 
 
 @pytest.fixture
-def mock_container():
+def mock_container() -> Any:
     """Create a mock dependency container."""
     container = MagicMock(spec=DependencyContainer)
 

@@ -1,6 +1,7 @@
 """Tests for context.py module."""
 
 import logging
+from collections.abc import Generator
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -15,7 +16,7 @@ from mcp_server_tree_sitter.models.project import ProjectRegistry
 
 
 @pytest.fixture
-def mock_dependencies():
+def mock_dependencies() -> dict[str, Any]:
     """Fixture to create mock dependencies for ServerContext."""
     config_manager = MagicMock(spec=ConfigurationManager)
     project_registry = MagicMock(spec=ProjectRegistry)
@@ -44,7 +45,7 @@ def mock_dependencies():
 
 
 @pytest.fixture
-def server_context(mock_dependencies: dict[str, Any]):
+def server_context(mock_dependencies: dict[str, Any]) -> ServerContext:
     """Fixture to create a ServerContext instance with mock dependencies."""
     return ServerContext(
         config_manager=mock_dependencies["config_manager"],

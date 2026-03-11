@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on Swift."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -37,7 +38,7 @@ func bar() -> Int {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_swift(self, tmp_path: Path):
+    def project_with_multi_scope_swift(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "main.swift"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_SWIFT, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_swift_test", description="Swift enclosing scope")
@@ -78,7 +79,7 @@ func bar() -> Int {
         assert_scope_is_function(scope, "set", "x = newValue", row=3)
 
     @pytest.fixture
-    def project_with_accessors_swift(self, tmp_path: Path):
+    def project_with_accessors_swift(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """struct S {
     var x: Int {
         get { return 0 }

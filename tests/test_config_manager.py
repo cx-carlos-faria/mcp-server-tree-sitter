@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+from collections.abc import Generator
 
 import pytest
 import yaml
@@ -10,7 +11,7 @@ import yaml
 
 
 @pytest.fixture
-def temp_yaml_file():
+def temp_yaml_file() -> Generator[str, None, None]:
     """Create a temporary YAML file with test configuration."""
     with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w+", delete=False) as temp_file:
         test_config = {

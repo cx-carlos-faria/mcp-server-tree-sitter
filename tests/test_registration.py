@@ -22,7 +22,7 @@ class MockMCPServer:
         self.tools = {}
         self.prompts = {}
 
-    def tool(self):
+    def tool(self) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Mock tool decorator."""
 
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -31,7 +31,7 @@ class MockMCPServer:
 
         return decorator
 
-    def prompt(self):
+    def prompt(self) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Mock prompt decorator."""
 
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -42,13 +42,13 @@ class MockMCPServer:
 
 
 @pytest.fixture
-def mock_mcp_server():
+def mock_mcp_server() -> MockMCPServer:
     """Fixture to create a mock MCP server."""
     return MockMCPServer()
 
 
 @pytest.fixture
-def mock_container():
+def mock_container() -> Any:
     """Fixture to create a mock dependency container."""
     container = MagicMock(spec=DependencyContainer)
     container.config_manager = MagicMock(spec=ConfigurationManager)

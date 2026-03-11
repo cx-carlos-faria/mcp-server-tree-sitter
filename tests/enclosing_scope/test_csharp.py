@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on C#."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -32,7 +33,7 @@ public class Test {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_csharp(self, tmp_path: Path):
+    def project_with_multi_scope_csharp(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "Test.cs"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_CSHARP, encoding="utf-8")
         register_project_tool(
@@ -71,7 +72,7 @@ public class Test {
         assert_scope_is_function(scope, "public Box(int n)", "this.n = n", row=4)
 
     @pytest.fixture
-    def project_with_constructor_csharp(self, tmp_path: Path):
+    def project_with_constructor_csharp(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """public class Box {
     private int n;
 

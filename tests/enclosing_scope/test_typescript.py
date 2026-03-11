@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on TypeScript."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -37,7 +38,7 @@ function bar(): number {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_ts(self, tmp_path: Path):
+    def project_with_multi_scope_ts(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "test.ts"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_TS, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_ts_test", description="TypeScript enclosing scope")
@@ -72,7 +73,7 @@ function bar(): number {
         assert_scope_is_function_or_method(scope, "constructor", "this.n = n", row=2)
 
     @pytest.fixture
-    def project_with_constructor_ts(self, tmp_path: Path):
+    def project_with_constructor_ts(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """class Box {
     constructor(n: number) {
         this.n = n;

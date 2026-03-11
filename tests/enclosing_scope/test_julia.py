@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on Julia."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -32,7 +33,7 @@ end
 """
 
     @pytest.fixture
-    def project_with_multi_scope_julia(self, tmp_path: Path):
+    def project_with_multi_scope_julia(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "main.jl"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_JL, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_julia_test", description="Julia enclosing scope")

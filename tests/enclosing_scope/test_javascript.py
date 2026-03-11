@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on JavaScript."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -53,7 +54,7 @@ function bar() {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_js(self, tmp_path: Path):
+    def project_with_multi_scope_js(self, tmp_path: Path) -> Generator[str, None, None]:
         """Register a temp project with test.js containing program, function, class, and method."""
         test_file = tmp_path / "test.js"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_JS, encoding="utf-8")
@@ -131,7 +132,7 @@ function bar() {
         assert_scope_is_function_or_method(scope, "constructor", "this.n = n", row=2)
 
     @pytest.fixture
-    def project_with_constructor_js(self, tmp_path: Path):
+    def project_with_constructor_js(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """class Box {
     constructor(n) {
         this.n = n;

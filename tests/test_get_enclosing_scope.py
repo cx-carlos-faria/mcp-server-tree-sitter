@@ -1,6 +1,7 @@
 """Integration tests for get_enclosing_scope_for_path."""
 
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any, Tuple
 
@@ -44,7 +45,7 @@ class TestFindEnclosingScope:
     """
 
     @pytest.fixture
-    def python_tree_and_source(self):
+    def python_tree_and_source(self) -> Tuple[Any, bytes]:
         """Parse PYTHON_SOURCE with Python and return (tree, source_bytes)."""
         registry = LanguageRegistry()
         parser = registry.get_parser("python")
@@ -88,7 +89,7 @@ class TestEnclosingScopeForPath:
     """
 
     @pytest.fixture
-    def project_with_python_file(self):
+    def project_with_python_file(self) -> Generator[dict[str, Any], None, None]:
         """Register a temporary project with test.py containing one function."""
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

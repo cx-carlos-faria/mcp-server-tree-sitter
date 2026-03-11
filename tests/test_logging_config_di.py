@@ -3,6 +3,7 @@
 import io
 import logging
 import tempfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
@@ -14,7 +15,7 @@ from tests.test_helpers import configure, get_ast, register_project_tool, temp_c
 
 
 @contextmanager
-def capture_logs(logger_name: str = "mcp_server_tree_sitter"):
+def capture_logs(logger_name: str = "mcp_server_tree_sitter") -> Generator[io.StringIO, None, None]:
     """
     Context manager to capture logs from a specific logger.
 
@@ -49,7 +50,7 @@ def capture_logs(logger_name: str = "mcp_server_tree_sitter"):
 
 
 @pytest.fixture
-def test_project():
+def test_project() -> Generator[dict[str, Any], None, None]:
     """Create a temporary test project with a sample file."""
     with tempfile.TemporaryDirectory() as temp_dir:
         project_path = Path(temp_dir)

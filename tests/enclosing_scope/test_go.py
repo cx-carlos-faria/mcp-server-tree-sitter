@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on Go."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -39,7 +40,7 @@ func bar() int {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_go(self, tmp_path: Path):
+    def project_with_multi_scope_go(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "main.go"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_GO, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_go_test", description="Go enclosing scope")

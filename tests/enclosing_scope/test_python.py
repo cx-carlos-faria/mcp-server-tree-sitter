@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on Python."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -49,7 +50,7 @@ def bar():
 """
 
     @pytest.fixture
-    def project_with_multi_scope(self, tmp_path: Path):
+    def project_with_multi_scope(self, tmp_path: Path) -> Generator[str, None, None]:
         """Register a temp project with test.py containing module, function, class, and method."""
         test_file = tmp_path / "test.py"
         test_file.write_text(self.MULTI_SCOPE_SOURCE, encoding="utf-8")

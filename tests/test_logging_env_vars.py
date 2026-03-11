@@ -3,6 +3,7 @@
 import io
 import logging
 import os
+from collections.abc import Generator
 from contextlib import contextmanager
 from unittest.mock import patch
 
@@ -13,7 +14,7 @@ from mcp_server_tree_sitter.bootstrap import get_log_level_from_env, update_log_
 
 
 @contextmanager
-def capture_logs(logger_name: str = "mcp_server_tree_sitter"):
+def capture_logs(logger_name: str = "mcp_server_tree_sitter") -> Generator[io.StringIO, None, None]:
     """
     Context manager to capture logs from a specific logger.
 

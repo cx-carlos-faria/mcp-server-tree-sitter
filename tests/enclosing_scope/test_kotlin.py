@@ -1,5 +1,6 @@
 """Position tests for get_enclosing_scope on Kotlin."""
 
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -36,7 +37,7 @@ fun bar(): Int {
 """
 
     @pytest.fixture
-    def project_with_multi_scope_kotlin(self, tmp_path: Path):
+    def project_with_multi_scope_kotlin(self, tmp_path: Path) -> Generator[str, None, None]:
         test_file = tmp_path / "main.kt"
         test_file.write_text(self.MULTI_SCOPE_SOURCE_KT, encoding="utf-8")
         register_project_tool(str(tmp_path), name="enclosing_scope_kotlin_test", description="Kotlin enclosing scope")
@@ -77,7 +78,7 @@ fun bar(): Int {
         assert_scope_is_function(scope, "set(value)", "field = value", row=3)
 
     @pytest.fixture
-    def project_with_accessors_kotlin(self, tmp_path: Path):
+    def project_with_accessors_kotlin(self, tmp_path: Path) -> Generator[str, None, None]:
         source = """class C {
     var x: Int
         get() = 0

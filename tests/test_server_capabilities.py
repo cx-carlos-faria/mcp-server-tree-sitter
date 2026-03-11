@@ -17,10 +17,10 @@ class MockMCPServer:
         """Initialize mock server with capability dictionary."""
         self.capabilities = {}
 
-    def capability(self, name: str):
+    def capability(self, name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Mock decorator for registering capabilities."""
 
-        def decorator(func: Callable[..., Any]):
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             self.capabilities[name] = func
             return func
 
@@ -28,13 +28,13 @@ class MockMCPServer:
 
 
 @pytest.fixture
-def mock_server():
+def mock_server() -> MockMCPServer:
     """Create a mock MCP server for testing."""
     return MockMCPServer()
 
 
 @pytest.fixture
-def mock_config():
+def mock_config() -> Any:
     """Create a mock configuration for testing."""
     config = MagicMock()
     config.cache.enabled = True

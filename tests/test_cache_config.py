@@ -2,6 +2,7 @@
 
 import tempfile
 import time
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
@@ -12,7 +13,7 @@ from tests.test_helpers import get_ast, register_project_tool, temp_config
 
 
 @pytest.fixture
-def test_project():
+def test_project() -> Generator[dict[str, Any], None, None]:
     """Create a temporary test project with sample files."""
     with tempfile.TemporaryDirectory() as temp_dir:
         project_path = Path(temp_dir)
