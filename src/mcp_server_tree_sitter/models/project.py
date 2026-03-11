@@ -1,7 +1,7 @@
 """Project model for MCP server.
 
-Singleton pattern: ProjectRegistry uses the __new__-based singleton pattern (see TASKS.md
-Task-07). This is the single mechanism used for process-wide singletons in this codebase.
+Singleton pattern: ProjectRegistry uses the __new__-based singleton pattern.
+This is the single mechanism used for process-wide singletons in this codebase.
 """
 
 import logging
@@ -112,7 +112,7 @@ class ProjectRegistry:
     """Manages projects for code analysis.
 
     __new__-based singleton: only one instance exists per process. Thread-safe;
-    call ProjectRegistry() or use get_container().project_registry to get the instance.
+    call ProjectRegistry() or use get_app().project_registry to get the instance.
     """
 
     _instance: Optional["ProjectRegistry"] = None
