@@ -6,7 +6,7 @@ metrics. Symbol extraction in symbol_extraction; metrics in metrics; dependencie
 
 import os
 from collections import Counter
-from typing import Any, Dict, Optional
+from typing import TypedDict, cast
 
 from ..exceptions import SecurityError
 from ..language.registry import LanguageRegistry
@@ -19,7 +19,50 @@ from .dependencies import find_dependencies
 from .metrics import compute_cyclomatic_complexity, count_lines_and_comments
 from .symbol_extraction import extract_symbols
 
+
+class _EntryPoint(TypedDict):
+    path: str
+    language: str
+
+
+class _BuildFile(TypedDict):
+    path: str
+    type: str
+
+
+class _KeyFileSymbolCounts(TypedDict):
+    file: str
+    symbols: dict[str, int]
+
+
+class ProjectStructureResult(TypedDict, total=False):
+    name: str
+    path: str
+    languages: dict[str, int]
+    entry_points: list[_EntryPoint]
+    build_files: list[_BuildFile]
+    dir_counts: dict[str, int]
+    file_counts: dict[str, int]
+    total_files: int
+    key_files_analysis: dict[str, list[_KeyFileSymbolCounts]]
+
+
+class ComplexityResult(TypedDict):
+    line_count: int
+    code_lines: int
+    empty_lines: int
+    comment_lines: int
+    comment_ratio: float
+    function_count: int
+    class_count: int
+    avg_function_lines: float
+    cyclomatic_complexity: int
+    language: str
+
+
 __all__ = [
+    "ComplexityResult",
+    "ProjectStructureResult",
     "extract_symbols",
     "analyze_project_structure",
     "find_dependencies",
@@ -31,8 +74,8 @@ def analyze_project_structure(
     project: Project,
     language_registry: LanguageRegistry,
     scan_depth: int = 3,
-    mcp_ctx: Optional[MCPContextProtocol] = None,
-) -> Dict[str, Any]:
+    mcp_ctx: MCPContextProtocol | None = None,
+) -> ProjectStructureResult:
     """
     Analyze the overall structure of a project.
 
@@ -194,24 +237,27 @@ def analyze_project_structure(
                 if language_analysis:
                     key_files_analysis[language] = language_analysis
 
-    return {
-        "name": project.name,
-        "path": str(project.root_path),
-        "languages": languages,
-        "entry_points": entry_points,
-        "build_files": build_files,
-        "dir_counts": dict(dir_counts),
-        "file_counts": dict(file_counts),
-        "total_files": sum(languages.values()),
-        "key_files_analysis": key_files_analysis,
-    }
+    return cast(
+        ProjectStructureResult,
+        {
+            "name": project.name,
+            "path": str(project.root_path),
+            "languages": languages,
+            "entry_points": entry_points,
+            "build_files": build_files,
+            "dir_counts": dict(dir_counts),
+            "file_counts": dict(file_counts),
+            "total_files": sum(languages.values()),
+            "key_files_analysis": key_files_analysis,
+        },
+    )
 
 
 def analyze_code_complexity(
     project: Project,
     file_path: str,
     language_registry: LanguageRegistry,
-) -> Dict[str, Any]:
+) -> ComplexityResult:
     """
     Analyze code complexity.
 
