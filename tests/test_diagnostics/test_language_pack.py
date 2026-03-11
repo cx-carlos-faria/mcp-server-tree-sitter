@@ -1,12 +1,13 @@
 """Pytest-based diagnostic tests for tree-sitter language pack integration."""
 
 import sys
+from typing import Any
 
 import pytest
 
 
 @pytest.mark.diagnostic
-def test_tree_sitter_import(diagnostic) -> None:
+def test_tree_sitter_import(diagnostic: Any) -> None:
     """Test basic import of tree-sitter library."""
     try:
         # Try to import the tree-sitter library
@@ -46,7 +47,7 @@ def test_tree_sitter_import(diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_pack_import(diagnostic) -> None:
+def test_language_pack_import(diagnostic: Any) -> None:
     """Test basic import of tree-sitter-language-pack."""
     try:
         # Try to import the tree-sitter-language-pack
@@ -80,7 +81,7 @@ def test_language_pack_import(diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_binding_available(diagnostic) -> None:
+def test_language_binding_available(diagnostic: Any) -> None:
     """Test if specific language bindings are available."""
     test_languages = [
         "python",
@@ -132,7 +133,7 @@ def test_language_binding_available(diagnostic) -> None:
         raise
 
 
-def _get_language_binding(language_name) -> dict:
+def _get_language_binding(language_name: str) -> dict:
     """Helper method to test getting a language binding from the language pack."""
     try:
         from tree_sitter_language_pack import get_language, get_parser
@@ -159,7 +160,7 @@ def _get_language_binding(language_name) -> dict:
 
 
 @pytest.mark.diagnostic
-def test_python_environment(diagnostic) -> None:
+def test_python_environment(diagnostic: Any) -> None:
     """Test the Python environment to help diagnose issues."""
     env_info = {
         "python_version": sys.version,

@@ -5,6 +5,7 @@ import logging
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -13,7 +14,7 @@ from tests.test_helpers import configure, get_ast, register_project_tool, temp_c
 
 
 @contextmanager
-def capture_logs(logger_name="mcp_server_tree_sitter"):
+def capture_logs(logger_name: str = "mcp_server_tree_sitter"):
     """
     Context manager to capture logs from a specific logger.
 
@@ -72,7 +73,7 @@ def test_project():
         yield {"name": project_name, "path": str(project_path), "file": "test.py"}
 
 
-def test_log_level_setting_di(test_project) -> None:
+def test_log_level_setting_di(test_project: dict[str, Any]) -> None:
     """Test that log_level setting controls logging verbosity."""
     # Root logger for the package
     logger_name = "mcp_server_tree_sitter"

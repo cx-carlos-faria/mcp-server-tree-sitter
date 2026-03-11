@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
 
 @pytest.mark.diagnostic
-def test_get_symbols_error(test_project, diagnostic) -> None:
+def test_get_symbols_error(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test get_symbols and diagnose unpacking errors."""
     diagnostic.add_detail("project", test_project["name"])
     diagnostic.add_detail("file", test_project["file"])
@@ -94,7 +94,7 @@ def test_get_symbols_error(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_get_dependencies_error(test_project, diagnostic) -> None:
+def test_get_dependencies_error(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test get_dependencies and diagnose unpacking errors."""
     diagnostic.add_detail("project", test_project["name"])
     diagnostic.add_detail("file", test_project["file"])
@@ -127,7 +127,7 @@ def test_get_dependencies_error(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_analyze_complexity_error(test_project, diagnostic) -> None:
+def test_analyze_complexity_error(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test analyze_complexity and diagnose unpacking errors."""
     diagnostic.add_detail("project", test_project["name"])
     diagnostic.add_detail("file", test_project["file"])
@@ -161,7 +161,7 @@ def test_analyze_complexity_error(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_run_query_error(test_project, diagnostic) -> None:
+def test_run_query_error(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test run_query and diagnose unpacking errors."""
     diagnostic.add_detail("project", test_project["name"])
     diagnostic.add_detail("file", test_project["file"])

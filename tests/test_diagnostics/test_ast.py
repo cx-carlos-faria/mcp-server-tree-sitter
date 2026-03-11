@@ -2,6 +2,7 @@
 
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -41,7 +42,7 @@ def test_project():
 
 
 @pytest.mark.diagnostic
-def test_ast_failure(test_project, diagnostic) -> None:
+def test_ast_failure(test_project: dict[str, Any], diagnostic: Any) -> None:
     """Test the get_ast functionality."""
     # Add test details to diagnostic data
     diagnostic.add_detail("project", test_project["name"])
@@ -84,7 +85,7 @@ def test_ast_failure(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_detection(diagnostic) -> None:
+def test_language_detection(diagnostic: Any) -> None:
     """Test language detection functionality."""
     registry = LanguageRegistry()
 

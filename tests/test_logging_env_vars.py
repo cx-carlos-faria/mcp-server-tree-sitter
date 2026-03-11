@@ -6,12 +6,14 @@ import os
 from contextlib import contextmanager
 from unittest.mock import patch
 
+import pytest
+
 # Import from bootstrap module rather than logging_config
 from mcp_server_tree_sitter.bootstrap import get_log_level_from_env, update_log_levels
 
 
 @contextmanager
-def capture_logs(logger_name="mcp_server_tree_sitter"):
+def capture_logs(logger_name: str = "mcp_server_tree_sitter"):
     """
     Context manager to capture logs from a specific logger.
 
@@ -141,7 +143,7 @@ def test_update_log_levels() -> None:
         child_logger.setLevel(original_child_level)
 
 
-def test_env_var_affects_logging(monkeypatch) -> None:
+def test_env_var_affects_logging(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test that MCP_TS_LOG_LEVEL environment variable affects logging behavior."""
     # Set environment variable to DEBUG
     monkeypatch.setenv("MCP_TS_LOG_LEVEL", "DEBUG")

@@ -1,6 +1,7 @@
 """Tests for context.py module."""
 
 import logging
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -43,7 +44,7 @@ def mock_dependencies():
 
 
 @pytest.fixture
-def server_context(mock_dependencies):
+def server_context(mock_dependencies: dict[str, Any]):
     """Fixture to create a ServerContext instance with mock dependencies."""
     return ServerContext(
         config_manager=mock_dependencies["config_manager"],
@@ -53,7 +54,7 @@ def server_context(mock_dependencies):
     )
 
 
-def test_server_context_initialization(mock_dependencies) -> None:
+def test_server_context_initialization(mock_dependencies: dict[str, Any]) -> None:
     """Test that ServerContext is initialized correctly with provided dependencies."""
     context = ServerContext(
         config_manager=mock_dependencies["config_manager"],
@@ -69,7 +70,9 @@ def test_server_context_initialization(mock_dependencies) -> None:
 
 
 @patch("mcp_server_tree_sitter.di.get_container")
-def test_server_context_initialization_with_container(mock_get_container, mock_dependencies) -> None:
+def test_server_context_initialization_with_container(
+    mock_get_container: Any, mock_dependencies: dict[str, Any]
+) -> None:
     """Test that ServerContext falls back to container when dependencies are not provided."""
     container = MagicMock()
     container.config_manager = mock_dependencies["config_manager"]
@@ -96,7 +99,7 @@ def test_server_context_initialization_with_container(mock_get_container, mock_d
     assert context.tree_cache is mock_dependencies["tree_cache"]
 
 
-def test_get_config(server_context, mock_dependencies) -> None:
+def test_get_config(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that get_config returns the config from the config manager."""
     config = server_context.get_config()
 
@@ -104,7 +107,7 @@ def test_get_config(server_context, mock_dependencies) -> None:
     assert config == mock_dependencies["config_manager"].get_config.return_value
 
 
-def test_register_project(server_context, mock_dependencies) -> None:
+def test_register_project(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that register_project calls the project registry with correct parameters."""
     # Setup
     project_registry = mock_dependencies["project_registry"]
@@ -124,7 +127,7 @@ def test_register_project(server_context, mock_dependencies) -> None:
     assert result == {"name": "test_project", "path": "/path"}
 
 
-def test_register_project_with_error(server_context, mock_dependencies) -> None:
+def test_register_project_with_error(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that register_project handles errors correctly."""
     # Setup
     project_registry = mock_dependencies["project_registry"]
@@ -137,7 +140,7 @@ def test_register_project_with_error(server_context, mock_dependencies) -> None:
     assert "Failed to register project" in str(excinfo.value)
 
 
-def test_list_projects(server_context, mock_dependencies) -> None:
+def test_list_projects(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that list_projects calls the project registry."""
     # Setup
     project_registry = mock_dependencies["project_registry"]
@@ -151,7 +154,7 @@ def test_list_projects(server_context, mock_dependencies) -> None:
     assert result == [{"name": "project1"}, {"name": "project2"}]
 
 
-def test_remove_project(server_context, mock_dependencies) -> None:
+def test_remove_project(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that remove_project calls the project registry."""
     # Setup
     project_registry = mock_dependencies["project_registry"]
@@ -164,7 +167,7 @@ def test_remove_project(server_context, mock_dependencies) -> None:
     assert result == {"status": "success", "message": "Project 'test_project' removed"}
 
 
-def test_clear_cache_all(server_context, mock_dependencies) -> None:
+def test_clear_cache_all(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that clear_cache clears all caches when no project/file is specified."""
     # Setup
     tree_cache = mock_dependencies["tree_cache"]
@@ -177,7 +180,7 @@ def test_clear_cache_all(server_context, mock_dependencies) -> None:
     assert result == {"status": "success", "message": "Cache cleared"}
 
 
-def test_clear_cache_for_file(server_context, mock_dependencies) -> None:
+def test_clear_cache_for_file(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that clear_cache clears cache for a specific file."""
     # Setup
     tree_cache = mock_dependencies["tree_cache"]
@@ -197,7 +200,9 @@ def test_clear_cache_for_file(server_context, mock_dependencies) -> None:
 
 
 @patch("logging.getLogger")
-def test_configure_with_yaml(mock_get_logger, server_context, mock_dependencies) -> None:
+def test_configure_with_yaml(
+    mock_get_logger: Any, server_context: ServerContext, mock_dependencies: dict[str, Any]
+) -> None:
     """Test that configure loads a YAML config file."""
     # Setup
     config_manager = mock_dependencies["config_manager"]
@@ -212,7 +217,7 @@ def test_configure_with_yaml(mock_get_logger, server_context, mock_dependencies)
     config_manager.to_dict.assert_called_once()
 
 
-def test_configure_cache_enabled(server_context, mock_dependencies) -> None:
+def test_configure_cache_enabled(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that configure sets cache.enabled correctly."""
     # Setup
     config_manager = mock_dependencies["config_manager"]
@@ -227,7 +232,7 @@ def test_configure_cache_enabled(server_context, mock_dependencies) -> None:
     config_manager.to_dict.assert_called_once()
 
 
-def test_configure_max_file_size(server_context, mock_dependencies) -> None:
+def test_configure_max_file_size(server_context: ServerContext, mock_dependencies: dict[str, Any]) -> None:
     """Test that configure sets security.max_file_size_mb correctly."""
     # Setup
     config_manager = mock_dependencies["config_manager"]
@@ -241,7 +246,9 @@ def test_configure_max_file_size(server_context, mock_dependencies) -> None:
 
 
 @patch("logging.getLogger")
-def test_configure_log_level(mock_get_logger, server_context, mock_dependencies) -> None:
+def test_configure_log_level(
+    mock_get_logger: Any, server_context: ServerContext, mock_dependencies: dict[str, Any]
+) -> None:
     """Test that configure sets log_level correctly."""
     # Setup
     config_manager = mock_dependencies["config_manager"]

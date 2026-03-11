@@ -1,12 +1,14 @@
 """Pytest-based diagnostic tests for language registry functionality."""
 
+from typing import Any
+
 import pytest
 
 from mcp_server_tree_sitter.language.registry import LanguageRegistry
 
 
 @pytest.mark.diagnostic
-def test_language_detection(diagnostic) -> None:
+def test_language_detection(diagnostic: Any) -> None:
     """Test language detection functionality."""
     registry = LanguageRegistry()
 
@@ -45,7 +47,7 @@ def test_language_detection(diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_list_empty(diagnostic) -> None:
+def test_language_list_empty(diagnostic: Any) -> None:
     """Test that list_languages returns languages correctly."""
     registry = LanguageRegistry()
 
@@ -83,7 +85,7 @@ def test_language_list_empty(diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_detection_vs_listing(diagnostic) -> None:
+def test_language_detection_vs_listing(diagnostic: Any) -> None:
     """Test discrepancy between language detection and language listing."""
     registry = LanguageRegistry()
 

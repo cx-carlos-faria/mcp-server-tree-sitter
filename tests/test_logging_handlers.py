@@ -9,7 +9,7 @@ from mcp_server_tree_sitter.bootstrap import get_logger, update_log_levels
 
 
 @contextmanager
-def temp_logger(name="mcp_server_tree_sitter.test_handlers"):
+def temp_logger(name: str = "mcp_server_tree_sitter.test_handlers"):
     """Create a temporary logger for testing."""
     logger = logging.getLogger(name)
 

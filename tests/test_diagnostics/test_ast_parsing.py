@@ -61,7 +61,7 @@ def parse_file(file_path: Path, language: str) -> Tuple[Any, bytes]:
 
 
 @pytest.mark.diagnostic
-def test_get_ast_functionality(test_project, diagnostic) -> None:
+def test_get_ast_functionality(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test the get_ast MCP tool functionality."""
     # Add test details to diagnostic data
     diagnostic.add_detail("project", test_project["name"])
@@ -107,7 +107,7 @@ def test_get_ast_functionality(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_direct_parsing(test_project, diagnostic) -> None:
+def test_direct_parsing(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test lower-level parse_file function to isolate issues."""
     file_path = test_project["path"] / test_project["file"]
     diagnostic.add_detail("file_path", str(file_path))

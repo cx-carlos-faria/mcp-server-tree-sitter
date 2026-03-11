@@ -2,6 +2,7 @@
 
 import tempfile
 from pathlib import Path
+from typing import Any, Tuple
 
 import pytest
 
@@ -50,7 +51,9 @@ class TestFindEnclosingScope:
         tree = parser.parse(self.PYTHON_SOURCE)
         return tree, self.PYTHON_SOURCE
 
-    def test_position_inside_function_returns_function_scope(self, python_tree_and_source) -> None:
+    def test_position_inside_function_returns_function_scope(
+        self, python_tree_and_source: Tuple[Any, bytes]
+    ) -> None:
         """Position inside function body → kind function, text contains function, start_line <= row <= end_line."""
         tree, source_bytes = python_tree_and_source
         root = tree.root_node
@@ -58,14 +61,18 @@ class TestFindEnclosingScope:
         result = find_enclosing_scope(root, source_bytes, row, col, label, "python")
         assert_scope_is_function(result, "def foo()", "return 1", row=row)
 
-    def test_position_on_import_returns_module_scope(self, python_tree_and_source) -> None:
+    def test_position_on_import_returns_module_scope(
+        self, python_tree_and_source: Tuple[Any, bytes]
+    ) -> None:
         """Position on import line → kind is module/namespace, text includes the import."""
         tree, source_bytes = python_tree_and_source
         root = tree.root_node
         result = find_enclosing_scope(root, source_bytes, 0, 0, "import", "python")
         assert_scope_is_module(result, "import", "def foo()", "return 1", "class Bar")
 
-    def test_position_in_class_body_not_in_method_returns_class_scope(self, python_tree_and_source) -> None:
+    def test_position_in_class_body_not_in_method_returns_class_scope(
+        self, python_tree_and_source: Tuple[Any, bytes]
+    ) -> None:
         """Position inside class body but not inside a method → kind is class, text contains class definition."""
         tree, source_bytes = python_tree_and_source
         root = tree.root_node
@@ -91,7 +98,9 @@ class TestEnclosingScopeForPath:
             register_project_tool(path=str(root), name=name)
             yield {"name": name, "root": root}
 
-    def test_get_enclosing_scope_for_path_returns_scope_dict(self, project_with_python_file) -> None:
+    def test_get_enclosing_scope_for_path_returns_scope_dict(
+        self, project_with_python_file: dict[str, Any]
+    ) -> None:
         """Register temp project with test.py; call get_enclosing_scope_for_path; assert result has kind,
         text, start_line, end_line and position inside function gives function scope."""
         project_registry = get_project_registry()

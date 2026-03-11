@@ -55,7 +55,7 @@ def test_project() -> Generator[Dict[str, Any], None, None]:
 
 
 @pytest.mark.diagnostic
-def test_cursor_ast_implementation(test_project, diagnostic) -> None:
+def test_cursor_ast_implementation(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test the cursor-based AST implementation."""
     # Add test details to diagnostic data
     diagnostic.add_detail("project", test_project["name"])
@@ -128,7 +128,7 @@ def test_cursor_ast_implementation(test_project, diagnostic) -> None:
 
 
 @pytest.mark.diagnostic
-def test_large_ast_handling(test_project, diagnostic) -> None:
+def test_large_ast_handling(test_project: Dict[str, Any], diagnostic: Any) -> None:
     """Test handling of a slightly larger AST to ensure cursor-based approach works."""
     # Add test details to diagnostic data
     diagnostic.add_detail("project", test_project["name"])
@@ -204,7 +204,7 @@ if __name__ == "__main__":
         class_nodes = []
         function_nodes = []
 
-        def count_nodes(node_dict) -> None:
+        def count_nodes(node_dict: dict[str, Any]) -> None:
             if node_dict["type"] == "class_definition":
                 class_nodes.append(node_dict["id"])
             elif node_dict["type"] == "function_definition":
