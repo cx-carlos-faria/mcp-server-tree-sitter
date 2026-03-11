@@ -2,7 +2,7 @@
 
 This document explains the configuration system for the MCP Tree-sitter Server, including both the YAML configuration format and the internal architecture changes for configuration management.
 
-**Example file:** An example configuration with all fields and their defaults is [config.example.yaml](config.example.yaml). It is auto-generated from the `ServerConfig` Pydantic schema; run `make config-example` from the repo root to regenerate it.
+**Example file:** An example configuration with all fields and their defaults is [config.example.yaml](config.example.yaml).
 
 ## YAML Configuration Format
 

@@ -323,7 +323,7 @@ language_registry = app.language_registry
 
 ## Configuration
 
-An example configuration file with all options and their defaults is [docs/config.example.yaml](docs/config.example.yaml) (auto-generated from the `ServerConfig` schema; run `make config-example` to regenerate).
+An example configuration file with all options and their defaults is [docs/config.example.yaml](docs/config.example.yaml).
 
 Create a YAML configuration file:
 
