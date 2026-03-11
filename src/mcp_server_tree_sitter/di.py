@@ -1,9 +1,12 @@
 """Dependency injection container for MCP Tree-sitter Server.
 
-This module provides a central container for managing all application dependencies,
-replacing the global variables and singletons previously used throughout the codebase.
+This module provides a central container for managing all application dependencies.
+Singleton pattern: we use a single mechanism throughout the codebase — the __new__-based
+singleton (see ProjectRegistry in models/project.py). The container itself is also a
+__new__ singleton so that get_container() always returns the same instance.
 """
 
+import threading
 from typing import Dict, Optional
 
 # Import logging from bootstrap package
@@ -17,13 +20,34 @@ logger = get_logger(__name__)
 
 
 class DependencyContainer:
-    """Container for all application dependencies."""
+    """Container for all application dependencies.
+
+    Implemented as a __new__-based singleton: only one instance exists per process.
+    Thread-safe; use DependencyContainer() or get_container() to obtain the instance.
+    """
+
+    _instance: Optional["DependencyContainer"] = None
+    _lock = threading.RLock()
+
+    def __new__(cls) -> "DependencyContainer":
+        """Return the single container instance (thread-safe __new__ singleton)."""
+        with cls._lock:
+            if cls._instance is None:
+                inst = super().__new__(cls)
+                cls._instance = inst
+            return cls._instance
 
     def __init__(self) -> None:
-        """Initialize container with all core dependencies."""
+        """Initialize container with all core dependencies (runs only once)."""
+        if getattr(self, "_container_initialized", False):
+            return
+        # Guard re-entrant init (e.g. LanguageRegistry() may call get_container().get_config())
+        if getattr(self, "_container_initializing", False):
+            return
+        self._container_initializing = True
         logger.debug("Initializing dependency container")
 
-        # Create core dependencies
+        # Create core dependencies (ProjectRegistry() returns the __new__ singleton)
         self.config_manager = ConfigurationManager()
         self._config = self.config_manager.get_config()
         self.project_registry = ProjectRegistry()
@@ -39,6 +63,8 @@ class DependencyContainer:
 
         # Storage for additional dependencies (callers must narrow after get_dependency)
         self._additional: Dict[str, object] = {}
+        self._container_initializing = False
+        self._container_initialized = True
 
     def get_config(self) -> ServerConfig:
         """Get the current configuration."""
@@ -55,10 +81,6 @@ class DependencyContainer:
         return self._additional.get(name)
 
 
-# Create the single container instance - this will be the ONLY global
-container = DependencyContainer()
-
-
 def get_container() -> DependencyContainer:
-    """Get the dependency container."""
-    return container
+    """Get the dependency container (__new__ singleton; same instance every time)."""
+    return DependencyContainer()
