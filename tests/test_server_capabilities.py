@@ -2,12 +2,14 @@
 
 import logging
 from collections.abc import Callable
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from mcp_server_tree_sitter.capabilities.server_capabilities import register_capabilities
+
+# Type alias for capability decorator (avoids Any)
+_Func = Callable[..., object]
 
 
 class MockMCPServer:
@@ -17,10 +19,10 @@ class MockMCPServer:
         """Initialize mock server with capability dictionary."""
         self.capabilities = {}
 
-    def capability(self, name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def capability(self, name: str) -> Callable[[_Func], _Func]:
         """Mock decorator for registering capabilities."""
 
-        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        def decorator(func: _Func) -> _Func:
             self.capabilities[name] = func
             return func
 
@@ -34,8 +36,8 @@ def mock_server() -> MockMCPServer:
 
 
 @pytest.fixture
-def mock_config() -> Any:
-    """Create a mock configuration for testing."""
+def mock_config() -> MagicMock:
+    """Create a mock configuration for testing (config_manager.get_config return value)."""
     config = MagicMock()
     config.cache.enabled = True
     config.security.max_file_size_mb = 10
@@ -45,7 +47,9 @@ def mock_config() -> Any:
 
 @patch("mcp_server_tree_sitter.di.get_container")
 def test_register_capabilities(
-    mock_get_container: Any, mock_server: Any, mock_config: Any
+    mock_get_container: MagicMock,
+    mock_server: MockMCPServer,
+    mock_config: MagicMock,
 ) -> None:
     """Test that capabilities are registered correctly."""
     # Configure mock container
@@ -64,7 +68,10 @@ def test_register_capabilities(
 @patch("mcp_server_tree_sitter.capabilities.server_capabilities.logger")
 @patch("mcp_server_tree_sitter.di.get_container")
 def test_handle_logging(
-    mock_get_container: Any, mock_logger: Any, mock_server: Any, mock_config: Any
+    mock_get_container: MagicMock,
+    mock_logger: MagicMock,
+    mock_server: MockMCPServer,
+    mock_config: MagicMock,
 ) -> None:
     """Test the logging capability handler."""
     # Configure mock container
@@ -102,7 +109,9 @@ def test_handle_logging(
 
 @patch("mcp_server_tree_sitter.di.get_container")
 def test_handle_completion_project_suggestions(
-    mock_get_container: Any, mock_server: Any, mock_config: Any
+    mock_get_container: MagicMock,
+    mock_server: MockMCPServer,
+    mock_config: MagicMock,
 ) -> None:
     """Test completion handler for project suggestions."""
     # Configure mock container
@@ -143,7 +152,9 @@ def test_handle_completion_project_suggestions(
 
 @patch("mcp_server_tree_sitter.di.get_container")
 def test_handle_completion_language_suggestions(
-    mock_get_container: Any, mock_server: Any, mock_config: Any
+    mock_get_container: MagicMock,
+    mock_server: MockMCPServer,
+    mock_config: MagicMock,
 ) -> None:
     """Test completion handler for language suggestions."""
     # Configure mock container
@@ -180,7 +191,9 @@ def test_handle_completion_language_suggestions(
 
 @patch("mcp_server_tree_sitter.di.get_container")
 def test_handle_completion_config_suggestions(
-    mock_get_container: Any, mock_server: Any, mock_config: Any
+    mock_get_container: MagicMock,
+    mock_server: MockMCPServer,
+    mock_config: MagicMock,
 ) -> None:
     """Test completion handler for config suggestions."""
     # Configure mock container

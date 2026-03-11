@@ -1,6 +1,5 @@
 """Tests for mcp_context.py module."""
 
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -9,8 +8,8 @@ from mcp_server_tree_sitter.utils.context.mcp_context import MCPContext, Progres
 
 
 @pytest.fixture
-def mock_mcp_context() -> Any:
-    """Create a mock MCP context."""
+def mock_mcp_context() -> MagicMock:
+    """Create a mock MCP context (implements MCPContextProtocol interface)."""
     ctx = MagicMock()
     ctx.report_progress = MagicMock()
     ctx.info = MagicMock()
@@ -92,7 +91,7 @@ def test_mcp_context_init() -> None:
     assert context.ctx == mock_ctx
 
 
-def test_mcp_context_report_progress_with_ctx(mock_mcp_context: Any) -> None:
+def test_mcp_context_report_progress_with_ctx(mock_mcp_context: MagicMock) -> None:
     """Test MCPContext.report_progress with a context."""
     context = MCPContext(mock_mcp_context)
 
@@ -108,7 +107,7 @@ def test_mcp_context_report_progress_with_ctx(mock_mcp_context: Any) -> None:
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_report_progress_without_ctx(mock_logger: Any) -> None:
+def test_mcp_context_report_progress_without_ctx(mock_logger: MagicMock) -> None:
     """Test MCPContext.report_progress without a context."""
     context = MCPContext(None)
 
@@ -124,7 +123,9 @@ def test_mcp_context_report_progress_without_ctx(mock_logger: Any) -> None:
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_report_progress_with_exception(mock_logger: Any, mock_mcp_context: Any) -> None:
+def test_mcp_context_report_progress_with_exception(
+    mock_logger: MagicMock, mock_mcp_context: MagicMock
+) -> None:
     """Test MCPContext.report_progress when an exception occurs."""
     # Configure mock to raise exception
     mock_mcp_context.report_progress.side_effect = Exception("Test exception")
@@ -146,7 +147,7 @@ def test_mcp_context_report_progress_with_exception(mock_logger: Any, mock_mcp_c
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_info(mock_logger: Any, mock_mcp_context: Any) -> None:
+def test_mcp_context_info(mock_logger: MagicMock, mock_mcp_context: MagicMock) -> None:
     """Test MCPContext.info."""
     context = MCPContext(mock_mcp_context)
 
@@ -161,7 +162,7 @@ def test_mcp_context_info(mock_logger: Any, mock_mcp_context: Any) -> None:
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_warning(mock_logger: Any, mock_mcp_context: Any) -> None:
+def test_mcp_context_warning(mock_logger: MagicMock, mock_mcp_context: MagicMock) -> None:
     """Test MCPContext.warning."""
     context = MCPContext(mock_mcp_context)
 
@@ -176,7 +177,7 @@ def test_mcp_context_warning(mock_logger: Any, mock_mcp_context: Any) -> None:
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_error(mock_logger: Any, mock_mcp_context: Any) -> None:
+def test_mcp_context_error(mock_logger: MagicMock, mock_mcp_context: MagicMock) -> None:
     """Test MCPContext.error."""
     context = MCPContext(mock_mcp_context)
 
@@ -191,7 +192,7 @@ def test_mcp_context_error(mock_logger: Any, mock_mcp_context: Any) -> None:
 
 
 @patch("mcp_server_tree_sitter.utils.context.mcp_context.logger")
-def test_mcp_context_info_without_ctx(mock_logger: Any) -> None:
+def test_mcp_context_info_without_ctx(mock_logger: MagicMock) -> None:
     """Test MCPContext.info without a context."""
     context = MCPContext(None)
 
