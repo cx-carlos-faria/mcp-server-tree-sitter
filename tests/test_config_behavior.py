@@ -61,7 +61,7 @@ def test_cache_enabled_setting(test_project: dict[str, Any]) -> None:
         # Override get method to track cache hits/misses
         original_get = tree_cache.get
 
-        def tracked_get(*args, **kwargs):
+        def tracked_get(*args: Any, **kwargs: Any) -> Any:
             nonlocal cache_hit_count, cache_miss_count
             result = original_get(*args, **kwargs)
             if result is None:
@@ -102,14 +102,14 @@ def test_cache_enabled_setting(test_project: dict[str, Any]) -> None:
         original_get = tree_cache.get
         original_put = tree_cache.put
 
-        def tracked_get(*args, **kwargs):
+        def tracked_get(*args: Any, **kwargs: Any) -> Any:
             nonlocal cache_miss_count
             result = original_get(*args, **kwargs)
             if result is None:
                 cache_miss_count += 1
             return result
 
-        def tracked_put(*args, **kwargs):
+        def tracked_put(*args: Any, **kwargs: Any) -> Any:
             nonlocal put_count
             put_count += 1
             return original_put(*args, **kwargs)

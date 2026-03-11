@@ -592,7 +592,7 @@ def test_debug_file_saving(test_project: Dict[str, Any]) -> None:
 
     # Define a custom JSON encoder for bytes objects
     class BytesEncoder(json.JSONEncoder):
-        def default(self, obj: Any):
+        def default(self, obj: Any) -> Any:
             if isinstance(obj, bytes):
                 return obj.decode("utf-8", errors="replace")
             return super().default(obj)
