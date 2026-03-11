@@ -1,6 +1,8 @@
 """Tests for the tools.registration module."""
 
 import inspect
+from collections.abc import Callable
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -23,7 +25,7 @@ class MockMCPServer:
     def tool(self):
         """Mock tool decorator."""
 
-        def decorator(func):
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             self.tools[func.__name__] = func
             return func
 
@@ -32,7 +34,7 @@ class MockMCPServer:
     def prompt(self):
         """Mock prompt decorator."""
 
-        def decorator(func):
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             self.prompts[func.__name__] = func
             return func
 
@@ -68,7 +70,7 @@ def mock_container():
     return container
 
 
-def test_register_tools_registers_all_tools(mock_mcp_server, mock_container) -> None:
+def test_register_tools_registers_all_tools(mock_mcp_server: Any, mock_container: Any) -> None:
     """Test that register_tools registers all the expected tools."""
     # Call the function
     register_tools(mock_mcp_server, mock_container)
@@ -107,7 +109,7 @@ def test_register_tools_registers_all_tools(mock_mcp_server, mock_container) -> 
         assert tool_name in mock_mcp_server.tools, f"Tool {tool_name} was not registered"
 
 
-def test_get_enclosing_scope_tool_registered_with_correct_contract(mock_mcp_server, mock_container) -> None:
+def test_get_enclosing_scope_tool_registered_with_correct_contract(mock_mcp_server: Any, mock_container: Any) -> None:
     """After registration, get_enclosing_scope exists and signature/docstring mention project, path, row, column."""
     register_tools(mock_mcp_server, mock_container)
 
@@ -125,7 +127,7 @@ def test_get_enclosing_scope_tool_registered_with_correct_contract(mock_mcp_serv
     assert "column" in combined, "get_enclosing_scope contract should mention column"
 
 
-def test_register_prompts_registers_all_prompts(mock_mcp_server, mock_container) -> None:
+def test_register_prompts_registers_all_prompts(mock_mcp_server: Any, mock_container: Any) -> None:
     """Test that _register_prompts registers all the expected prompts."""
     # Call the function
     _register_prompts(mock_mcp_server, mock_container)
@@ -144,7 +146,9 @@ def test_register_prompts_registers_all_prompts(mock_mcp_server, mock_container)
 
 
 @patch("mcp_server_tree_sitter.tools.analysis.extract_symbols")
-def test_get_symbols_tool_calls_extract_symbols(mock_extract_symbols, mock_mcp_server, mock_container) -> None:
+def test_get_symbols_tool_calls_extract_symbols(
+    mock_extract_symbols: Any, mock_mcp_server: Any, mock_container: Any
+) -> None:
     """Test that the get_symbols tool correctly calls extract_symbols."""
     # Setup
     register_tools(mock_mcp_server, mock_container)
@@ -162,7 +166,9 @@ def test_get_symbols_tool_calls_extract_symbols(mock_extract_symbols, mock_mcp_s
 
 
 @patch("mcp_server_tree_sitter.tools.search.query_code")
-def test_run_query_tool_calls_query_code(mock_query_code, mock_mcp_server, mock_container) -> None:
+def test_run_query_tool_calls_query_code(
+    mock_query_code: Any, mock_mcp_server: Any, mock_container: Any
+) -> None:
     """Test that the run_query tool correctly calls query_code."""
     # Setup
     register_tools(mock_mcp_server, mock_container)
@@ -184,7 +190,7 @@ def test_run_query_tool_calls_query_code(mock_query_code, mock_mcp_server, mock_
     assert args[5] == "python"
 
 
-def test_configure_tool_updates_config(mock_mcp_server, mock_container) -> None:
+def test_configure_tool_updates_config(mock_mcp_server: Any, mock_container: Any) -> None:
     """Test that the configure tool updates the configuration correctly."""
     # Setup
     register_tools(mock_mcp_server, mock_container)
@@ -200,7 +206,9 @@ def test_configure_tool_updates_config(mock_mcp_server, mock_container) -> None:
 
 
 @patch("mcp_server_tree_sitter.tools.file_operations.list_project_files")
-def test_list_files_tool_calls_list_project_files(mock_list_files, mock_mcp_server, mock_container) -> None:
+def test_list_files_tool_calls_list_project_files(
+    mock_list_files: Any, mock_mcp_server: Any, mock_container: Any
+) -> None:
     """Test that the list_files tool correctly calls list_project_files."""
     # Setup
     register_tools(mock_mcp_server, mock_container)
@@ -217,7 +225,9 @@ def test_list_files_tool_calls_list_project_files(mock_list_files, mock_mcp_serv
 
 
 @patch("mcp_server_tree_sitter.tools.ast_operations.get_file_ast")
-def test_get_ast_tool_calls_get_file_ast(mock_get_ast, mock_mcp_server, mock_container) -> None:
+def test_get_ast_tool_calls_get_file_ast(
+    mock_get_ast: Any, mock_mcp_server: Any, mock_container: Any
+) -> None:
     """Test that the get_ast tool correctly calls get_file_ast."""
     # Setup
     register_tools(mock_mcp_server, mock_container)

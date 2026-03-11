@@ -22,7 +22,7 @@ from tests.test_helpers import (
 
 
 @pytest.fixture
-def test_project(request) -> Generator[Dict[str, Any], None, None]:
+def test_project(request: pytest.FixtureRequest) -> Generator[Dict[str, Any], None, None]:
     """Create a test project with Python files containing known symbols and imports."""
     with tempfile.TemporaryDirectory() as temp_dir:
         project_path = Path(temp_dir)
@@ -151,7 +151,7 @@ class FileHandler:
         }
 
 
-def test_symbol_extraction_diagnostics(test_project) -> None:
+def test_symbol_extraction_diagnostics(test_project: Dict[str, Any]) -> None:
     """Test symbol extraction to diagnose specific issues in the implementation."""
     # Get symbols from first file, excluding class methods
     symbols = get_symbols(project=test_project["name"], file_path="test.py")
@@ -235,7 +235,7 @@ def test_symbol_extraction_diagnostics(test_project) -> None:
     print(f"Imports: {symbols_utils['imports']}")
 
 
-def test_dependency_analysis_diagnostics(test_project) -> None:
+def test_dependency_analysis_diagnostics(test_project: Dict[str, Any]) -> None:
     """Test dependency analysis to diagnose specific issues in the implementation."""
     # Get dependencies from the first file
     dependencies = get_dependencies(project=test_project["name"], file_path="test.py")
@@ -271,7 +271,7 @@ def test_dependency_analysis_diagnostics(test_project) -> None:
     print(f"Dependencies: {dependencies_utils}")
 
 
-def test_symbol_extraction_with_ast_access(test_project) -> None:
+def test_symbol_extraction_with_ast_access(test_project: Dict[str, Any]) -> None:
     """Test symbol extraction with direct AST access to identify where processing breaks."""
     # Get the AST for the file
     ast_result = get_ast(
@@ -292,7 +292,7 @@ def test_symbol_extraction_with_ast_access(test_project) -> None:
     classes = []
     imports = []
 
-    def extract_symbols_manually(node, path=()) -> None:
+    def extract_symbols_manually(node: Any, path: tuple[int, ...] = ()) -> None:
         """Recursively extract symbols from the AST."""
         if not isinstance(node, dict):
             return
@@ -378,7 +378,7 @@ def test_symbol_extraction_with_ast_access(test_project) -> None:
     print(f"Manual imports: {len(imports)}, get_symbols: {len(symbols['imports'])}")
 
 
-def test_query_based_symbol_extraction(test_project) -> None:
+def test_query_based_symbol_extraction(test_project: Dict[str, Any]) -> None:
     """
     Test symbol extraction using direct tree-sitter queries to identify issues.
 
@@ -452,7 +452,7 @@ def test_query_based_symbol_extraction(test_project) -> None:
         imports: Dict[str, Dict[str, Any]] = {}
 
         # Helper function to process captures with different formats
-        def process_capture(captures, target_type, result_dict) -> None:
+        def process_capture(captures: Any, target_type: str, result_dict: Dict[str, Dict[str, Any]]) -> None:
             # Check if it's returning a dictionary format
             if isinstance(captures, dict):
                 # Dictionary format: {capture_name: [node1, node2, ...], ...}
@@ -498,7 +498,7 @@ def test_query_based_symbol_extraction(test_project) -> None:
         process_capture(class_captures, "class.name", classes)
 
         # For imports, use a separate function since the comparison is different
-        def process_import_capture(captures) -> None:
+        def process_import_capture(captures: Any) -> None:
             # Check if it's returning a dictionary format
             if isinstance(captures, dict):
                 # Dictionary format: {capture_name: [node1, node2, ...], ...}
@@ -577,7 +577,7 @@ def test_query_based_symbol_extraction(test_project) -> None:
         pytest.fail(f"Direct query execution failed: {str(e)}")
 
 
-def test_debug_file_saving(test_project) -> None:
+def test_debug_file_saving(test_project: Dict[str, Any]) -> None:
     """Save debug information to files for further analysis."""
     # Create a debug directory
     debug_dir = os.path.join(test_project["path"], "debug")
@@ -592,7 +592,7 @@ def test_debug_file_saving(test_project) -> None:
 
     # Define a custom JSON encoder for bytes objects
     class BytesEncoder(json.JSONEncoder):
-        def default(self, obj):
+        def default(self, obj: Any):
             if isinstance(obj, bytes):
                 return obj.decode("utf-8", errors="replace")
             return super().default(obj)
