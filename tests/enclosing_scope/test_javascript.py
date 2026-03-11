@@ -95,7 +95,9 @@ function bar() {
         scope = get_enclosing_scope_tool(project_with_multi_scope_js, "test.js", 6, 6, "Bar")
         assert_scope_is_class(scope, "class Bar")
 
-    def test_js_position_in_class_body_not_in_method_returns_class_scope(self, project_with_multi_scope_js: str) -> None:
+    def test_js_position_in_class_body_not_in_method_returns_class_scope(
+        self, project_with_multi_scope_js: str
+    ) -> None:
         """Position at first char of 'z' (7, 2) in class body → class scope, not method."""
         scope = get_enclosing_scope_tool(project_with_multi_scope_js, "test.js", 7, 2, "z")
         assert_scope_is_class(scope, "class Bar", "z = 0", row=7)

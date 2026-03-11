@@ -6,15 +6,15 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-# Type alias for tool/prompt decorator (avoids Any in MockMCPServer)
-_Func = Callable[..., object]
-
 from mcp_server_tree_sitter.cache.parser_cache import TreeCache
 from mcp_server_tree_sitter.config import ConfigurationManager, ServerConfig
 from mcp_server_tree_sitter.di import DependencyContainer
 from mcp_server_tree_sitter.language.registry import LanguageRegistry
 from mcp_server_tree_sitter.models.project import ProjectRegistry
 from mcp_server_tree_sitter.tools.registration import _register_prompts, register_tools
+
+# Type alias for tool/prompt decorator (avoids Any in MockMCPServer)
+_Func = Callable[..., object]
 
 
 class MockMCPServer:
