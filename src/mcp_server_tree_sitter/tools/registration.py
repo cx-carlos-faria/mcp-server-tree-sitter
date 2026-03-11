@@ -8,6 +8,8 @@ import logging
 import os
 from typing import Any, Dict, List, Optional
 
+from ..config import ConfigDict
+
 from mcp.server.fastmcp import FastMCP
 
 from ..di import DependencyContainer
@@ -38,7 +40,7 @@ def register_tools(mcp_server: FastMCP, container: DependencyContainer) -> None:
         cache_enabled: Optional[bool] = None,
         max_file_size_mb: Optional[int] = None,
         log_level: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> ConfigDict:
         """Configure the server.
 
         Args:
