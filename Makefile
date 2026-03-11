@@ -133,6 +133,11 @@ format:
 	$(UV) run ruff format .
 	$(UV) run ruff check --fix .
 
+# Regenerate example config from ServerConfig schema
+.PHONY: config-example
+config-example:
+	$(UV) run python scripts/generate_config_example.py
+
 # Cleaning targets
 .PHONY: clean
 clean:
@@ -224,6 +229,7 @@ show-help:
 	@echo "  lint                  : Run linting checks (ruff)"
 	@echo "  ty                    : Run type checker (ty)"
 	@echo "  format                : Format code using ruff"
+	@echo "  config-example        : Regenerate docs/config.example.yaml from ServerConfig schema"
 	@echo "  build                 : Build distribution packages"
 	@echo "  pre-release           : Run all pre-release checks (clean, lint, test, build, verify)"
 	@echo "  release-local         : Perform a complete local release process"
