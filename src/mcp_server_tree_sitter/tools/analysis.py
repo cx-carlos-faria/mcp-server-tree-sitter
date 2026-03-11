@@ -8,7 +8,7 @@ from ..exceptions import SecurityError
 from ..language.query_templates import get_query_template
 from ..language.registry import LanguageRegistry
 from ..models.project import Project
-from ..utils.context import MCPContext
+from ..utils.context import MCPContext, MCPContextProtocol
 from ..utils.file_io import get_comment_prefix, read_text_file
 from ..utils.security import validate_file_access
 from ..utils.tree_sitter_helpers import (
@@ -392,7 +392,7 @@ def analyze_project_structure(
     project: Project,
     language_registry: LanguageRegistry,
     scan_depth: int = 3,
-    mcp_ctx: Optional[Any] = None,
+    mcp_ctx: Optional[MCPContextProtocol] = None,
 ) -> Dict[str, Any]:
     """
     Analyze the overall structure of a project.
