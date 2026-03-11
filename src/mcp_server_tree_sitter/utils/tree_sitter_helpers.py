@@ -505,14 +505,14 @@ def update_cached_tree(
 
     try:
         # Apply edit to the tree
-        edit_dict: TreeEditDict = {
-            "start_byte": start_byte,
-            "old_end_byte": old_end_byte,
-            "new_end_byte": new_end_byte,
-            "start_point": start_point,
-            "old_end_point": old_end_point,
-            "new_end_point": new_end_point,
-        }
+        edit_dict = TreeEditDict(
+            start_byte=start_byte,
+            old_end_byte=old_end_byte,
+            new_end_byte=new_end_byte,
+            start_point=start_point,
+            old_end_point=old_end_point,
+            new_end_point=new_end_point,
+        )
         edit_tree(old_tree, edit_dict)
 
         # Read updated source
@@ -557,14 +557,14 @@ def create_edit(
     Returns:
         Edit dictionary with all parameters
     """
-    return {
-        "start_byte": start_byte,
-        "old_end_byte": old_end_byte,
-        "new_end_byte": new_end_byte,
-        "start_point": start_point,
-        "old_end_point": old_end_point,
-        "new_end_point": new_end_point,
-    }
+    return TreeEditDict(
+        start_byte=start_byte,
+        old_end_byte=old_end_byte,
+        new_end_byte=new_end_byte,
+        start_point=start_point,
+        old_end_point=old_end_point,
+        new_end_point=new_end_point,
+    )
 
 
 def parse_file_with_detection(

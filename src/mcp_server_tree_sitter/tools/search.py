@@ -3,7 +3,7 @@
 import concurrent.futures
 import re
 from pathlib import Path
-from typing import TypedDict, cast
+from typing import TypedDict
 
 from ..cache.parser_cache import TreeCache
 from ..exceptions import QueryError, SecurityError
@@ -118,23 +118,21 @@ def search_text(
                     start = max(0, i - 1 - context_lines)
                     end = min(len(lines), i + context_lines)
 
-                    context: list[_ContextLine] = [
-                        cast(
-                            _ContextLine,
-                            {"line": ctx_i + 1, "text": lines[ctx_i].rstrip("\n"), "is_match": (ctx_i == i - 1)},
+                    context = [
+                        _ContextLine(
+                            line=ctx_i + 1,
+                            text=lines[ctx_i].rstrip("\n"),
+                            is_match=(ctx_i == i - 1),
                         )
                         for ctx_i in range(start, end)
                     ]
 
                     file_results.append(
-                        cast(
-                            TextMatchResult,
-                            {
-                                "file": str(file_path.relative_to(root)),
-                                "line": i,
-                                "text": line.rstrip("\n"),
-                                "context": context,
-                            },
+                        TextMatchResult(
+                            file=str(file_path.relative_to(root)),
+                            line=i,
+                            text=line.rstrip("\n"),
+                            context=context,
                         )
                     )
 
@@ -249,16 +247,17 @@ def query_code(
                         except Exception:
                             text = "<binary data>"
 
-                        result: QueryMatchResult = {
-                            "file": file_path,
-                            "capture": capture_name,
-                            "start": {"row": node.start_point[0], "column": node.start_point[1]},
-                            "end": {"row": node.end_point[0], "column": node.end_point[1]},
-                        }
+                        text_str = (
+                            text.decode("utf-8", errors="replace") if isinstance(text, bytes) else text
+                        )
+                        result = QueryMatchResult(
+                            file=file_path,
+                            capture=capture_name,
+                            start=_QueryStartEnd(row=node.start_point[0], column=node.start_point[1]),
+                            end=_QueryStartEnd(row=node.end_point[0], column=node.end_point[1]),
+                        )
                         if include_snippets:
-                            result["text"] = (
-                                text.decode("utf-8", errors="replace") if isinstance(text, bytes) else text
-                            )
+                            result["text"] = text_str
                         results.append(result)
             else:
                 # List format: [(node1, capture_name1), (node2, capture_name2), ...]
@@ -288,16 +287,17 @@ def query_code(
                     except Exception:
                         text = "<binary data>"
 
-                    result2: QueryMatchResult = {
-                        "file": file_path,
-                        "capture": capture_name,
-                        "start": {"row": node.start_point[0], "column": node.start_point[1]},
-                        "end": {"row": node.end_point[0], "column": node.end_point[1]},
-                    }
+                    text_str2 = (
+                        text.decode("utf-8", errors="replace") if isinstance(text, bytes) else text
+                    )
+                    result2 = QueryMatchResult(
+                        file=file_path,
+                        capture=capture_name,
+                        start=_QueryStartEnd(row=node.start_point[0], column=node.start_point[1]),
+                        end=_QueryStartEnd(row=node.end_point[0], column=node.end_point[1]),
+                    )
                     if include_snippets:
-                        result2["text"] = (
-                            text.decode("utf-8", errors="replace") if isinstance(text, bytes) else text
-                        )
+                        result2["text"] = text_str2
                     results.append(result2)
         except Exception as e:
             raise QueryError(f"Error querying {file_path}: {e}") from e
