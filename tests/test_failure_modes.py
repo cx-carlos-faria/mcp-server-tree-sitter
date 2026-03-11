@@ -11,7 +11,7 @@ These tests help ensure robust behavior in various scenarios.
 
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, Generator
+from typing import Any, Callable, Dict, Generator
 
 import pytest
 
@@ -227,7 +227,7 @@ class TestCodeSearch:
     ],
 )
 def test_error_handling_with_invalid_project(
-    command_name: str, function: Any, args: dict[str, Any]
+    command_name: str, function: Callable[..., object], args: dict[str, object]
 ) -> None:
     """Test that commands properly handle invalid project names."""
     # Use an invalid project name
@@ -264,7 +264,7 @@ class TestASTHandling:
         # Find the function definition
         function_nodes = []
 
-        def find_functions(node: Any) -> None:
+        def find_functions(node: object) -> None:
             if isinstance(node, dict) and node.get("type") == "function_definition":
                 function_nodes.append(node)
             if isinstance(node, dict) and "children" in node:

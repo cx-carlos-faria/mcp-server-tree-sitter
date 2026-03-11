@@ -244,7 +244,7 @@ def test_query_result_structure_transformation() -> None:
     # This helps verify result transformation is correct
 
     # Create a function to transform mock tree-sitter query results to expected MCP format
-    def transform_query_results(ts_results: Any) -> List[Dict[str, Any]]:
+    def transform_query_results(ts_results: object) -> List[Dict[str, object]]:
         """Transform tree-sitter query results to MCP format."""
         # Implement a simplified version of what the actual transformation might be
         mcp_results = []

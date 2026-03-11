@@ -144,7 +144,7 @@ def test_cache_eviction_policy(test_project: dict[str, Any]) -> None:
         # Override the cache's get method to track access
         original_get = tree_cache.get
 
-        def tracked_get(file_path: Path, language: str) -> Any:
+        def tracked_get(file_path: Path, language: str) -> object:
             # Track access
             key = f"{file_path.name}"
             if key not in access_order:

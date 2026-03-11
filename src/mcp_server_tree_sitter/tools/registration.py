@@ -8,10 +8,9 @@ import logging
 import os
 from typing import Any, Dict, List, Optional
 
-from ..config import ConfigDict
-
 from mcp.server.fastmcp import FastMCP
 
+from ..config import ConfigDict
 from ..di import DependencyContainer
 from ..exceptions import ProjectError
 from ..utils.context.mcp_context import MCPContextProtocol

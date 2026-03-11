@@ -48,10 +48,11 @@ from mcp_server_tree_sitter.tools.query_builder import (
     describe_node_types,
 )
 from mcp_server_tree_sitter.tools.search import query_code, search_text
+from mcp_server_tree_sitter.utils.context import MCPContextProtocol
 
 
 @contextmanager
-def temp_config(**kwargs: Any) -> Generator[None, None, None]:
+def temp_config(**kwargs: object) -> Generator[None, None, None]:
     """
     Context manager for temporarily changing configuration settings.
 
@@ -348,7 +349,9 @@ def get_symbols(
     return extract_symbols(project_registry.get_project(project), file_path, language_registry, symbol_types)
 
 
-def analyze_project(project: str, scan_depth: int = 3, ctx: Optional[Any] = None) -> Dict[str, Any]:
+def analyze_project(
+    project: str, scan_depth: int = 3, ctx: Optional[MCPContextProtocol] = None
+) -> Dict[str, object]:
     """Analyze overall project structure."""
     project_registry = get_project_registry()
     language_registry = get_language_registry()
@@ -496,12 +499,12 @@ def configure(
 
 
 def configure_with_context(
-    context: Any,
+    context: object,
     config_path: Optional[str] = None,
     cache_enabled: Optional[bool] = None,
     max_file_size_mb: Optional[int] = None,
     log_level: Optional[str] = None,
-) -> tuple[Dict[str, Any], Any]:
+) -> tuple[Dict[str, object], object]:
     """
     Configure with explicit context - compatibility function.
 

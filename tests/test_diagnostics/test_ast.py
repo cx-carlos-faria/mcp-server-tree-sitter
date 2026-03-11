@@ -9,6 +9,7 @@ import pytest
 
 from mcp_server_tree_sitter.api import get_project_registry
 from mcp_server_tree_sitter.language.registry import LanguageRegistry
+from mcp_server_tree_sitter.testing import DiagnosticData
 from tests.test_helpers import get_ast, register_project_tool
 
 # Load the diagnostic fixture
@@ -43,7 +44,7 @@ def test_project() -> Generator[dict[str, Any], None, None]:
 
 
 @pytest.mark.diagnostic
-def test_ast_failure(test_project: dict[str, Any], diagnostic: Any) -> None:
+def test_ast_failure(test_project: dict[str, Any], diagnostic: DiagnosticData) -> None:
     """Test the get_ast functionality."""
     # Add test details to diagnostic data
     diagnostic.add_detail("project", test_project["name"])
@@ -86,7 +87,7 @@ def test_ast_failure(test_project: dict[str, Any], diagnostic: Any) -> None:
 
 
 @pytest.mark.diagnostic
-def test_language_detection(diagnostic: Any) -> None:
+def test_language_detection(diagnostic: DiagnosticData) -> None:
     """Test language detection functionality."""
     registry = LanguageRegistry()
 

@@ -170,7 +170,7 @@ def test_rust_ast_parsing(rust_project: Dict[str, Any]) -> None:
     functions_found = []
     impl_blocks_found = []
 
-    def find_nodes(node: Any, node_types: list[str]) -> None:
+    def find_nodes(node: object, node_types: list[str]) -> None:
         if isinstance(node, dict) and "type" in node:
             if node["type"] == "struct_item":
                 if "children" in node:
@@ -385,7 +385,7 @@ fn main() {
     traits_found = []
     macros_found = []
 
-    def find_specific_nodes(node: Any) -> None:
+    def find_specific_nodes(node: object) -> None:
         if isinstance(node, dict) and "type" in node:
             if node["type"] == "trait_item":
                 if "children" in node:
