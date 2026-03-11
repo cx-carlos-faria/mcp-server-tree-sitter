@@ -3,7 +3,6 @@
 import logging
 import os
 import tempfile
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -14,8 +13,8 @@ from mcp_server_tree_sitter.server import configure_with_context, main, mcp
 
 
 @pytest.fixture
-def mock_container() -> Any:
-    """Create a mock dependency container."""
+def mock_container() -> MagicMock:
+    """Create a mock dependency container (spec=DependencyContainer)."""
     container = MagicMock(spec=DependencyContainer)
 
     # Set up mocks for required components
@@ -76,7 +75,7 @@ def test_mcp_server_initialized() -> None:
     assert mcp.name == "tree_sitter"
 
 
-def test_configure_with_context_basic(mock_container: Any) -> None:
+def test_configure_with_context_basic(mock_container: MagicMock) -> None:
     """Test basic configuration with no specific settings."""
     # Call configure_with_context with only the container
     config_dict, config = configure_with_context(mock_container)
@@ -94,7 +93,7 @@ def test_configure_with_context_basic(mock_container: Any) -> None:
     assert "log_level" in config_dict
 
 
-def test_configure_with_context_cache_enabled(mock_container: Any) -> None:
+def test_configure_with_context_cache_enabled(mock_container: MagicMock) -> None:
     """Test configuration with cache_enabled setting."""
     # Call configure_with_context with cache_enabled=False
     config_dict, config = configure_with_context(mock_container, cache_enabled=False)
@@ -106,7 +105,7 @@ def test_configure_with_context_cache_enabled(mock_container: Any) -> None:
     mock_container.tree_cache.set_enabled.assert_called_with(False)
 
 
-def test_configure_with_context_max_file_size(mock_container: Any) -> None:
+def test_configure_with_context_max_file_size(mock_container: MagicMock) -> None:
     """Test configuration with max_file_size_mb setting."""
     # Call configure_with_context with max_file_size_mb=20
     config_dict, config = configure_with_context(mock_container, max_file_size_mb=20)
@@ -115,7 +114,7 @@ def test_configure_with_context_max_file_size(mock_container: Any) -> None:
     mock_container.config_manager.update_value.assert_called_with("security.max_file_size_mb", 20)
 
 
-def test_configure_with_context_log_level(mock_container: Any) -> None:
+def test_configure_with_context_log_level(mock_container: MagicMock) -> None:
     """Test configuration with log_level setting."""
     # Call configure_with_context with log_level="DEBUG"
     with patch("logging.getLogger") as mock_get_logger:
@@ -124,7 +123,7 @@ def test_configure_with_context_log_level(mock_container: Any) -> None:
         mock_get_logger.return_value = mock_root_logger
 
         # Set up side effect to handle both cases: with or without a name
-        def get_logger_side_effect(*args: Any, **kwargs: Any) -> Any:
+        def get_logger_side_effect(*args: object, **kwargs: object) -> object:
             return mock_root_logger
 
         mock_get_logger.side_effect = get_logger_side_effect
@@ -148,7 +147,7 @@ def test_configure_with_context_log_level(mock_container: Any) -> None:
     mock_root_logger.setLevel.assert_called_with(logging.DEBUG)
 
 
-def test_configure_with_context_config_path(mock_container: Any) -> None:
+def test_configure_with_context_config_path(mock_container: MagicMock) -> None:
     """Test configuration with config_path setting."""
     # Create a temporary YAML file
     with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as temp_file:
@@ -175,7 +174,7 @@ cache:
         os.unlink(config_path)
 
 
-def test_configure_with_context_nonexistent_config_path(mock_container: Any) -> None:
+def test_configure_with_context_nonexistent_config_path(mock_container: MagicMock) -> None:
     """Test configuration with a nonexistent config path."""
     # Use a path that definitely doesn't exist
     config_path = "/nonexistent/config.yaml"
