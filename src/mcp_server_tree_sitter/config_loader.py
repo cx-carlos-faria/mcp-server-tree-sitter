@@ -2,8 +2,9 @@
 
 import logging
 import os
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Optional, Union
+from typing import Optional, Union
 
 import yaml
 from pydantic import ValidationError
