@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from ..exceptions import FileAccessError, ProjectError
 from ..models.project import Project
@@ -128,7 +128,9 @@ def get_file_content(
         end_idx = min(start_idx + max_lines, n) if max_lines is not None else n
         chunk = lines[start_idx:end_idx]
 
-        return b"".join(chunk) if as_bytes else "".join(chunk)
+        if as_bytes:
+            return b"".join(cast(List[bytes], chunk))
+        return "".join(cast(List[str], chunk))
 
     except FileNotFoundError as e:
         raise FileAccessError(f"File not found: {path}") from e
