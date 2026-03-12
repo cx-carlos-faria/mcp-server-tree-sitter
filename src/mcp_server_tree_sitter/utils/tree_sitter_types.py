@@ -212,12 +212,12 @@ except ImportError:
         def root_node(self) -> DummyNode:
             return DummyNode()
 
-    # Export dummy types for type checking (conditional assignment; mypy sees two types)
-    Language = DummyLanguage  # type: ignore[assignment,misc]
-    Parser = DummyParser  # type: ignore[assignment,misc]
-    Tree = DummyTree  # type: ignore[assignment,misc]
-    Node = DummyNode  # type: ignore[assignment,misc]
-    TreeCursor = DummyTreeCursor  # type: ignore[assignment,misc]
+    # Export dummy types for type checking (conditional assignment)
+    Language = DummyLanguage
+    Parser = DummyParser
+    Tree = DummyTree
+    Node = DummyNode
+    TreeCursor = DummyTreeCursor
 
 
 # Helper functions: take object and narrow via isinstance (no Any; inputs are from our API or C).
