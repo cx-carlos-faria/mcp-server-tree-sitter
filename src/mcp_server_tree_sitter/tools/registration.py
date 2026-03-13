@@ -49,7 +49,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
 
         project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = get_language_registry().language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path) or "unknown"
 
         structure = ""
         try:
@@ -76,7 +76,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
 
         project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = get_language_registry().language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path) or "unknown"
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_explain_code_prompt(text, language, focus)
 
@@ -93,7 +93,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
 
         project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = get_language_registry().language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path) or "unknown"
 
         complexity_info = ""
         try:
