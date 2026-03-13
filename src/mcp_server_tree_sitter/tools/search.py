@@ -17,17 +17,13 @@ from ..utils.tree_sitter_helpers import run_query_captures
 logger = logging.getLogger(__name__)
 
 
-class _ContextLine(TypedDict):
-    line: int
-    text: str
-    is_match: bool
-
 
 class TextMatchResult(TypedDict):
     file: str
     line: int
     text: str
-    context: list[_ContextLine]
+    context_before: list[str]
+    context_after: list[str]
 
 
 class _QueryStartEnd(TypedDict):
@@ -114,7 +110,7 @@ def search_text(
                     if pending:
                         done_indices = []
                         for idx, entry in enumerate(pending):
-                            entry[2].append(_ContextLine(line=i, text=stripped, is_match=False))
+                            entry[2].append(stripped)
                             entry[1] -= 1
                             if entry[1] == 0:
                                 done_indices.append(idx)
@@ -133,13 +129,12 @@ def search_text(
                         is_match = pattern in line.lower()
 
                     if is_match:
-                        ctx_before = [_ContextLine(line=ln, text=t, is_match=False) for ln, t in pre_ctx]
-                        match_ctx_line = _ContextLine(line=i, text=stripped, is_match=True)
                         result = TextMatchResult(
                             file=str(file_path.relative_to(root)),
                             line=i,
                             text=stripped,
-                            context=ctx_before + [match_ctx_line] if context_lines > 0 else [],
+                            context_before=[t for _, t in pre_ctx],
+                            context_after=[],
                         )
                         if context_lines > 0:
                             pending.append([result, context_lines, []])
@@ -154,7 +149,7 @@ def search_text(
                 # Flush matches at EOF whose after-context was truncated
                 for entry in pending:
                     result = entry[0]
-                    result["context"].extend(entry[2])
+                    result["context_after"] = entry[2]
                     file_results.append(result)
                     if len(file_results) >= max_results:
                         break
