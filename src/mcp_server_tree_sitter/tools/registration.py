@@ -1,12 +1,12 @@
 """Tool and prompt registration for MCP server.
 
 Wires up handlers: project_tools, file_tools, ast_tools, search_tools, analysis_tools.
-Tools get shared state at call time via get_app().
+Tools get shared state at call time via api getters (get_project_registry, get_config, etc.).
 """
 
 from mcp.server.fastmcp import FastMCP
 
-from ..app import get_app
+from ..api import get_language_registry, get_project_registry
 from ..bootstrap import get_logger
 
 logger = get_logger(__name__)
@@ -18,7 +18,7 @@ from .search_tools import register_search_tools
 
 
 def register_tools(mcp_server: FastMCP) -> None:
-    """Register all MCP tools. Tools get shared state via get_app() at call time.
+    """Register all MCP tools. Tools get shared state via api getters at call time.
 
     Args:
         mcp_server: MCP server instance
@@ -32,7 +32,7 @@ def register_tools(mcp_server: FastMCP) -> None:
 
 
 def _register_prompts(mcp_server: FastMCP) -> None:
-    """Register all prompt templates. Prompts use get_app() at call time; bodies live in prompts.mcp_prompts."""
+    """Register all prompt templates. Prompts use api getters at call time; bodies live in prompts.mcp_prompts."""
     from ..prompts.mcp_prompts import (
         build_code_review_prompt,
         build_explain_code_prompt,
@@ -47,14 +47,13 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         from .analysis import extract_symbols
         from .file_operations import get_file_content
 
-        app = get_app()
-        project_obj = app.project_registry.get_project(project)
+        project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = app.language_registry.language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path)
 
         structure = ""
         try:
-            symbols = extract_symbols(project_obj, file_path, app.language_registry)
+            symbols = extract_symbols(project_obj, file_path, get_language_registry())
             if symbols.get("functions"):
                 structure += "\nFunctions:\n"
                 for func in symbols["functions"]:
@@ -75,10 +74,9 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         """Create a prompt for explaining a code file"""
         from .file_operations import get_file_content
 
-        app = get_app()
-        project_obj = app.project_registry.get_project(project)
+        project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = app.language_registry.language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path)
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_explain_code_prompt(text, language, focus)
 
@@ -93,14 +91,13 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         from .analysis import analyze_code_complexity
         from .file_operations import get_file_content
 
-        app = get_app()
-        project_obj = app.project_registry.get_project(project)
+        project_obj = get_project_registry().get_project(project)
         content = get_file_content(project_obj, file_path)
-        language = app.language_registry.language_for_file(file_path)
+        language = get_language_registry().language_for_file(file_path)
 
         complexity_info = ""
         try:
-            complexity = analyze_code_complexity(project_obj, file_path, app.language_registry)
+            complexity = analyze_code_complexity(project_obj, file_path, get_language_registry())
             complexity_info = f"""
             Code metrics:
             - Line count: {complexity["line_count"]}
@@ -124,11 +121,10 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         """Create a prompt for a project overview analysis"""
         from .analysis import analyze_project_structure
 
-        app = get_app()
-        project_obj = app.project_registry.get_project(project)
+        project_obj = get_project_registry().get_project(project)
 
         try:
-            analysis = analyze_project_structure(project_obj, app.language_registry)
+            analysis = analyze_project_structure(project_obj, get_language_registry())
             languages_str = "\n".join(
                 f"- {lang}: {count} files" for lang, count in analysis["languages"].items()
             )

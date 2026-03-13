@@ -2,7 +2,7 @@
 
 from mcp.server.fastmcp import FastMCP
 
-from ..app import get_app
+from ..api import get_config, get_language_registry, get_project_registry, get_tree_cache
 from .ast_operations import get_enclosing_scope_for_path
 from .search import QueryMatchResult, TextMatchResult, query_code, search_text
 
@@ -39,10 +39,9 @@ def register_search_tools(mcp_server: FastMCP) -> None:
         Raises:
             ProjectError: If project is not registered.
         """
-        app = get_app()
-        config = app.config_manager.get_config()
+        config = get_config()
         return search_text(
-            app.project_registry.get_project(project),
+            get_project_registry().get_project(project),
             pattern,
             file_pattern,
             max_results if max_results is not None else config.max_results_default,
@@ -79,16 +78,15 @@ def register_search_tools(mcp_server: FastMCP) -> None:
             ProjectError: If project is not registered.
             ValueError: If language cannot be detected for file.
         """
-        app = get_app()
-        project_obj = app.project_registry.get_project(project)
+        project_obj = get_project_registry().get_project(project)
         return get_enclosing_scope_for_path(
             project_obj,
             file_path,
             row,
             column,
             label if label is not None else "",
-            app.language_registry,
-            app.tree_cache,
+            get_language_registry(),
+            get_tree_cache(),
             max_lines,
         )
 
@@ -117,13 +115,12 @@ def register_search_tools(mcp_server: FastMCP) -> None:
             ProjectError: If project is not registered.
             ValueError: If neither file_path nor language provided when required.
         """
-        app = get_app()
-        config = app.config_manager.get_config()
+        config = get_config()
         return query_code(
-            app.project_registry.get_project(project),
+            get_project_registry().get_project(project),
             query,
-            app.language_registry,
-            app.tree_cache,
+            get_language_registry(),
+            get_tree_cache(),
             file_path,
             language,
             max_results if max_results is not None else config.max_results_default,
