@@ -3,6 +3,7 @@
 import concurrent.futures
 import logging
 import re
+from collections import deque
 from pathlib import Path
 from typing import TypedDict
 
@@ -98,45 +99,68 @@ def search_text(
             validate_file_access(file_path, root)
 
             with open(file_path, encoding="utf-8", errors="replace") as f:
-                # Only buffer all lines when context look-ahead/look-behind is needed
-                lines = f.readlines() if context_lines > 0 else None
-                line_source = lines if lines is not None else f
+                # Sliding-window context: O(context_lines) memory regardless of file size.
+                # pre_ctx holds the last `context_lines` (line_no, text) pairs seen before
+                # the current line.  pending holds matches still waiting for their
+                # after-context lines; each entry is [result, remaining, after_buf].
+                pre_ctx: deque[tuple[int, str]] = deque(maxlen=context_lines) if context_lines > 0 else deque()
+                # Each entry: [result, remaining_after_lines, after_buf]
+                pending: list[list] = []
 
-                for i, line in enumerate(line_source, 1):
+                for i, line in enumerate(f, 1):
+                    stripped = line.rstrip("\n")
+
+                    # Feed this line as after-context to all pending matches
+                    if pending:
+                        done_indices = []
+                        for idx, entry in enumerate(pending):
+                            entry[2].append(_ContextLine(line=i, text=stripped, is_match=False))
+                            entry[1] -= 1
+                            if entry[1] == 0:
+                                done_indices.append(idx)
+                        for idx in reversed(done_indices):
+                            result = pending.pop(idx)[0]
+                            file_results.append(result)
+                            if len(file_results) >= max_results:
+                                return file_results
+
+                    # Check whether the current line matches
                     if pattern_obj:
-                        match = bool(pattern_obj.search(line))
+                        is_match = bool(pattern_obj.search(line))
                     elif case_sensitive:
-                        match = pattern in line
+                        is_match = pattern in line
                     else:
-                        match = pattern in line.lower()
+                        is_match = pattern in line.lower()
 
-                    if match:
-                        context: list[_ContextLine] = []
-                        if context_lines > 0 and lines is not None:
-                            start = max(0, i - 1 - context_lines)
-                            end = min(len(lines), i + context_lines)
-                            context = [
-                                _ContextLine(
-                                    line=ctx_i + 1,
-                                    text=lines[ctx_i].rstrip("\n"),
-                                    is_match=(ctx_i == i - 1),
-                                )
-                                for ctx_i in range(start, end)
-                            ]
-
-                        file_results.append(
-                            TextMatchResult(
-                                file=str(file_path.relative_to(root)),
-                                line=i,
-                                text=line.rstrip("\n"),
-                                context=context,
-                            )
+                    if is_match:
+                        ctx_before = [_ContextLine(line=ln, text=t, is_match=False) for ln, t in pre_ctx]
+                        match_ctx_line = _ContextLine(line=i, text=stripped, is_match=True)
+                        result = TextMatchResult(
+                            file=str(file_path.relative_to(root)),
+                            line=i,
+                            text=stripped,
+                            context=ctx_before + [match_ctx_line] if context_lines > 0 else [],
                         )
+                        if context_lines > 0:
+                            pending.append([result, context_lines, []])
+                        else:
+                            file_results.append(result)
+                            if len(file_results) >= max_results:
+                                return file_results
 
-                        if len(file_results) >= max_results:
-                            break
-        except Exception as e:
-            logger.debug("Skipping file that could not be read: %s: %s", file_path, e)
+                    if context_lines > 0:
+                        pre_ctx.append((i, stripped))
+
+                # Flush matches at EOF whose after-context was truncated
+                for entry in pending:
+                    result = entry[0]
+                    result["context"].extend(entry[2])
+                    file_results.append(result)
+                    if len(file_results) >= max_results:
+                        break
+
+        except Exception as exc:
+            logger.debug("Skipping file that could not be read: %s: %s", file_path, exc)
 
         return file_results
 
