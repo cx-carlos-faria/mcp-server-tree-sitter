@@ -34,18 +34,19 @@ def list_project_files(
     pattern = pattern or "**/*"
     files = []
 
+    # Normalize once: lowercase + frozenset for O(1) lookup in both branches below
+    ext_filter: frozenset[str] | None = (
+        frozenset(e.lower() for e in filter_extensions) if filter_extensions else None
+    )
+
     # Handle max_depth=0 specially to avoid glob patterns with /*
     if max_depth == 0:
         # For max_depth=0, only list files directly in root directory
         for path in root.iterdir():
             if path.is_file():
-                # Skip files that don't match extension filter
-                if filter_extensions and path.suffix.lower()[1:] not in filter_extensions:
+                if ext_filter and path.suffix[1:].lower() not in ext_filter:
                     continue
-
-                # Get path relative to project root
-                rel_path = path.relative_to(root)
-                files.append(str(rel_path))
+                files.append(str(path.relative_to(root)))
 
         return sorted(files)
 
@@ -58,19 +59,11 @@ def list_project_files(
     # Ensure pattern doesn't start with / to avoid NotImplementedError
     pattern = pattern.removeprefix("/")
 
-    # Convert extensions to lowercase for case-insensitive matching
-    if filter_extensions:
-        filter_extensions = [ext.lower() for ext in filter_extensions]
-
     for path in root.glob(pattern):
         if path.is_file():
-            # Skip files that don't match extension filter
-            if filter_extensions and path.suffix.lower()[1:] not in filter_extensions:
+            if ext_filter and path.suffix[1:].lower() not in ext_filter:
                 continue
-
-            # Get path relative to project root
-            rel_path = path.relative_to(root)
-            files.append(str(rel_path))
+            files.append(str(path.relative_to(root)))
 
     return sorted(files)
 
