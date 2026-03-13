@@ -39,6 +39,7 @@ from mcp_server_tree_sitter.tools.ast_operations import find_node_at_position as
 from mcp_server_tree_sitter.tools.ast_operations import get_enclosing_scope_for_path
 from mcp_server_tree_sitter.tools.ast_operations import get_file_ast as ast_get_file_ast
 from mcp_server_tree_sitter.tools.debug import diagnose_yaml_config
+from mcp_server_tree_sitter.tools.project_tools import apply_configure
 from mcp_server_tree_sitter.tools.file_operations import (
     get_file_content,
     get_file_info,
@@ -461,39 +462,21 @@ def configure(
     max_file_size_mb: int | None = None,
     log_level: str | None = None,
 ) -> dict[str, Any]:
-    """Configure the server using shared app state."""
+    """Configure the server using shared app state. Delegates to apply_configure then syncs root logger."""
     app = get_app()
-    config_manager = app.config_manager
-
-    # Load config if path provided
-    if config_path:
-        logging.info(f"Configuring server with YAML config from: {config_path}")
-        config_manager.load_from_file(config_path)
-
-    # Update specific settings if provided
-    if cache_enabled is not None:
-        logging.info(f"Setting cache.enabled to {cache_enabled}")
-        config_manager.update_value("cache.enabled", cache_enabled)
-        app.tree_cache.set_enabled(cache_enabled)
-
-    if max_file_size_mb is not None:
-        logging.info(f"Setting security.max_file_size_mb to {max_file_size_mb}")
-        config_manager.update_value("security.max_file_size_mb", max_file_size_mb)
-
-    if log_level is not None:
-        logging.info(f"Setting log_level to {log_level}")
-        config_manager.update_value("log_level", log_level)
-
-        # Apply log level directly to loggers
-        log_level_value = getattr(logging, log_level, None)
-        if log_level_value is not None:
-            # Set the root logger for the package
-            root_logger = logging.getLogger("mcp_server_tree_sitter")
-            root_logger.setLevel(log_level_value)
-            logging.info(f"Applied log level {log_level} to mcp_server_tree_sitter loggers")
-
-    # Return current config as dict
-    return config_manager.to_dict()
+    result = apply_configure(
+        app.config_manager,
+        app.tree_cache,
+        config_path=config_path,
+        cache_enabled=cache_enabled,
+        max_file_size_mb=max_file_size_mb,
+        log_level=log_level,
+    )
+    root_logger = logging.getLogger("mcp_server_tree_sitter")
+    root_logger.setLevel(
+        getattr(logging, app.config_manager.get_config().log_level, logging.INFO)
+    )
+    return result
 
 
 def configure_with_context(
