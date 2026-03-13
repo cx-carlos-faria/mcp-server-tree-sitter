@@ -4,11 +4,14 @@ Orchestrates project structure analysis, dependency discovery, and complexity
 metrics. Symbol extraction in symbol_extraction; metrics in metrics; dependencies in dependencies.
 """
 
+import logging
 import os
 from collections import Counter
 from typing import TypedDict
 
 from ..exceptions import SecurityError
+
+logger = logging.getLogger(__name__)
 from ..language.registry import LanguageRegistry
 from ..models.project import Project
 from ..utils.context import MCPContext, MCPContextProtocol
@@ -217,8 +220,8 @@ def analyze_project_structure(
                         language_analysis.append(
                             _KeyFileSymbolCounts(file=file_path, symbols=symbol_counts)
                         )
-                    except Exception:
-                        # Skip problematic files
+                    except Exception as e:
+                        logger.debug("Skipping file for key-files analysis: %s: %s", file_path, e)
                         continue
 
                 if language_analysis:

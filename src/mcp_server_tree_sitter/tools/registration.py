@@ -7,6 +7,9 @@ Tools get shared state at call time via get_app().
 from mcp.server.fastmcp import FastMCP
 
 from ..app import get_app
+from ..bootstrap import get_logger
+
+logger = get_logger(__name__)
 from .analysis_tools import register_analysis_tools
 from .ast_tools import register_ast_tools
 from .file_tools import register_file_tools
@@ -60,8 +63,8 @@ def _register_prompts(mcp_server: FastMCP) -> None:
                 structure += "\nClasses:\n"
                 for cls in symbols["classes"]:
                     structure += f"- {cls['name']}\n"
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Symbol extraction failed for code_review prompt: %s", e)
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_code_review_prompt(text, language, structure)
@@ -108,8 +111,8 @@ def _register_prompts(mcp_server: FastMCP) -> None:
             - Avg. function length: {complexity["avg_function_lines"]} lines
             - Cyclomatic complexity: {complexity["cyclomatic_complexity"]}
             """
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Complexity analysis failed for suggest_improvements prompt: %s", e)
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_suggest_improvements_prompt(text, language, complexity_info)
@@ -137,7 +140,8 @@ def _register_prompts(mcp_server: FastMCP) -> None:
                 if analysis["build_files"]
                 else "None detected"
             )
-        except Exception:
+        except Exception as e:
+            logger.debug("Project structure analysis failed for project_overview prompt: %s", e)
             languages_str = "Error analyzing languages"
             entry_points_str = "Error detecting entry points"
             build_files_str = "Error detecting build files"

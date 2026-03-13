@@ -1,8 +1,11 @@
 """Dependency discovery (imports/includes) from source files."""
 
+import logging
 from collections import defaultdict
 
 from ..exceptions import SecurityError
+
+logger = logging.getLogger(__name__)
 from ..language.import_enrichers import get_dependency_module_enricher
 from ..language.query_templates import get_query_template
 from ..language.registry import LanguageRegistry
@@ -95,8 +98,8 @@ def find_dependencies(
                     elif parts and parts[0] == "import":
                         for module in " ".join(parts[1:]).split(","):
                             module_imports.add(module.strip().split(" as ")[0].strip())
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Could not parse import text for dependency: %s", e)
 
         if isinstance(matches, dict):
             for capture_name, nodes in matches.items():

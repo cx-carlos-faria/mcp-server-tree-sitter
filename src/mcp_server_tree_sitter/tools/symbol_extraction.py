@@ -1,9 +1,12 @@
 """Symbol extraction from source files using tree-sitter queries."""
 
+import logging
 from collections.abc import Generator
 from typing import Any
 
 from ..exceptions import SecurityError
+
+logger = logging.getLogger(__name__)
 from ..language.import_enrichers import get_symbol_import_enricher
 from ..language.loader import get_default_symbol_types
 from ..language.query_templates import get_query_template
@@ -232,9 +235,8 @@ def process_symbol_matches(
             # Add to symbols list
             symbols_dict[symbol_type].append(symbol)
 
-        except Exception:
-            # Skip problematic nodes
-            pass
+        except Exception as e:
+            logger.debug("Skipping symbol node: %s", e)
 
     def iter_matches() -> Generator[tuple[Node, str], None, None]:
         if isinstance(matches, dict):
