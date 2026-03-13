@@ -213,9 +213,11 @@ def get_ast(project: str, path: str, max_depth: int | None = None, include_text:
     project_registry = get_project_registry()
     language_registry = get_language_registry()
     tree_cache = get_tree_cache()
-    config = get_config()
 
-    depth = max_depth or config.language.default_max_depth
+    if max_depth is not None and max_depth <= 0:
+        raise ValueError("max_depth must be greater than 0")
+
+    depth = max_depth or get_config().language.default_max_depth
 
     return ast_get_file_ast(
         project_registry.get_project(project),
