@@ -220,7 +220,7 @@ def find_enclosing_scope(
 
     # Apply truncation if max_lines is set and scope exceeds it
     truncated = False
-    if max_lines > 0 and (end_line - start_line + 1) > max_lines:
+    if 0 < max_lines < (end_line - start_line + 1):
         truncated = True
         text, start_line, end_line = _truncate_scope_text(text, start_line, end_line, row, max_lines)
 

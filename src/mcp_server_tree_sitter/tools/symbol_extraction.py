@@ -213,13 +213,6 @@ def process_symbol_matches(
                                             item_name = get_node_text(item_child, source_bytes, decode=True)
                                             break
 
-                    alias_text = get_node_text(safe_node, source_bytes, decode=True)
-                    if module_name and item_name:
-                        text = f"{_to_str(module_name)}.{_to_str(item_name)} as {_to_str(alias_text)}"
-                    elif module_name:
-                        text = f"{_to_str(module_name)} as {_to_str(alias_text)}"
-                    else:
-                        text = _to_str(alias_text)
             # For other symbol types
             elif not capture_name.endswith(".name") and capture_name != symbol_type:
                 return
