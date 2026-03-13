@@ -24,9 +24,6 @@ jobs:
 
       - name: Run tests
         run: |
-          # Exclude enclosing_scope tests until fixed (pre-existing failures)
-          pytest tests -v \
-            --ignore=tests/enclosing_scope \
-            --ignore=tests/test_get_enclosing_scope.py
+          pytest tests -v
         env:
           PYTHONPATH: ${{ github.workspace }}/src
