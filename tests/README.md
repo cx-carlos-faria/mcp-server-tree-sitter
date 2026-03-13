@@ -8,24 +8,24 @@ Tests for the MCP Tree-sitter Server. Run with `make test` or `uv run --extra de
 
 ## Configuration
 
-| File                                      | Purpose                                                                                       |
-|-------------------------------------------|-----------------------------------------------------------------------------------------------|
-| **test_basic.py**                         | Default config values and basic project registry; minimal smoke tests.                        |
-| **test_config/test_config_manager.py**   | `ConfigurationManager`: init, load from file, `update_value`, `to_dict`, env overrides.       |
-| **test_config/test_config_behavior.py**  | How config (cache, security, max depth) affects real behavior (AST, file access, exclusions). |
-| **test_config/test_config_edge_cases.py**| Malformed YAML, unknown keys, env overrides, runtime `update_value`, precedence.               |
-| **test_config/test_yaml_config_di.py**   | Loading and applying server config from YAML via the DI/configure path.                        |
-| **test_config/test_env_config.py**       | Environment variable overrides (precedence over YAML and defaults).                           |
-| **test_config/test_cache_config.py**     | Cache-specific config: enabled, size, TTL, and cache behavior under those settings.           |
+| File                                       | Purpose                                                                                        |
+|--------------------------------------------|------------------------------------------------------------------------------------------------|
+| **test_basic.py**                          | Default config values and basic project registry; minimal smoke tests.                         |
+| **test_config/test_config_manager.py**     | `ConfigurationManager`: init, load from file, `update_value`, `to_dict`, env overrides.        |
+| **test_config/test_config_behavior.py**    | How config (cache, security, max depth) affects real behavior (AST, file access, exclusions).  |
+| **test_config/test_config_edge_cases.py**  | Malformed YAML, unknown keys, env overrides, runtime `update_value`, precedence.               |
+| **test_config/test_yaml_config_di.py**     | Loading and applying server config from YAML via the DI/configure path.                        |
+| **test_config/test_env_config.py**         | Environment variable overrides (precedence over YAML and defaults).                            |
+| **test_config/test_cache_config.py**       | Cache-specific config: enabled, size, TTL, and cache behavior under those settings.            |
 
 ---
 
 ## Dependency injection and context
 
-| File                | Purpose                                                                                                   |
-|---------------------|-----------------------------------------------------------------------------------------------------------|
-| **test_app.py**     | `App` singleton, core state initialized, single instance across threads.                                    |
-| **test_context.py** | `ServerContext` / global context: init, get_config, register/list/remove project, clear cache, configure. |
+| File                | Purpose                                                                                                    |
+|---------------------|------------------------------------------------------------------------------------------------------------|
+| **test_app.py**     | `App` singleton, core state initialized, single instance across threads.                                   |
+| **test_context.py** | `ServerContext` / global context: init, get_config, register/list/remove project, clear cache, configure.  |
 
 ---
 
@@ -74,21 +74,23 @@ Tests for the MCP Tree-sitter Server. Run with `make test` or `uv run --extra de
 
 ## Enclosing scope (get_enclosing_scope)
 
-| File                            | Purpose                                                                                       |
-|---------------------------------|-----------------------------------------------------------------------------------------------|
-| **test_scope_node_types.py**    | Scope node types and enclosure order per language (used by find_enclosing_scope).             |
-| **test_get_enclosing_scope.py** | get_enclosing_scope tool and find_enclosing_scope helper; position in function/class/module. |
+| File                            | Purpose                                                                                                                                        |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| **test_scope_node_types.py**    | Scope node types and enclosure order per language (used by find_enclosing_scope).                                                              |
+| **test_get_enclosing_scope.py** | get_enclosing_scope tool and find_enclosing_scope helper; position in function/class/module.                                                   |
 | **enclosing_scope/**            | Per-language scope tests (C, C#, C++, Go, Java, JavaScript, Julia, Kotlin, Python, Rust, Swift, TypeScript) and `scope_assertions.py` helpers. |
 
 ---
 
 ## Search, queries, and analysis
 
-| File                              | Purpose                                                                                            |
-|-----------------------------------|----------------------------------------------------------------------------------------------------|
-| **test_query_result_handling.py** | Query capture processing, result shape, capture types, and language-pack query execution.          |
-| **test_symbol_extraction.py**     | Symbol extraction, dependency analysis, AST access, query-based extraction, and debug file output. |
-| **test_rust_compatibility.py**    | Rust: AST parsing, symbol extraction, dependency analysis, and trait/macro handling.               |
+| File                              | Purpose                                                                                                                                                      |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **test_find_text_edge_cases.py**  | `find_text` edge cases: empty pattern, invalid regex, zero max_results, negative context_lines, no matching files.                                           |
+| **test_search_text_context.py**   | `search_text` context window: `context_before`/`context_after` content and order, BOF/EOF clipping, overlapping windows, `max_results` with pending context. |
+| **test_query_result_handling.py** | Query capture processing, result shape, capture types, and language-pack query execution.                                                                    |
+| **test_symbol_extraction.py**     | Symbol extraction, dependency analysis, AST access, query-based extraction, and debug file output.                                                           |
+| **test_rust_compatibility.py**    | Rust: AST parsing, symbol extraction, dependency analysis, and trait/macro handling.                                                                         |
 
 ---
 

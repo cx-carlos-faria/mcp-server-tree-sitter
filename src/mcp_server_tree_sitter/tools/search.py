@@ -115,7 +115,9 @@ def search_text(
                             if entry[1] == 0:
                                 done_indices.append(idx)
                         for idx in reversed(done_indices):
-                            result = pending.pop(idx)[0]
+                            entry = pending.pop(idx)
+                            result = entry[0]
+                            result["context_after"] = entry[2]
                             file_results.append(result)
                             if len(file_results) >= max_results:
                                 return file_results

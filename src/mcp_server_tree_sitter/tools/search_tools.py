@@ -27,6 +27,8 @@ def register_search_tools(mcp_server: FastMCP) -> None:
             project: Name of the registered project.
             pattern: Text pattern to search for.
             file_pattern: Glob to restrict files (e.g. '**/*.py'). Defaults to None (all files).
+                 Matches against relative file paths from the project root (e.g., "*.py", "src/**/*.ts").
+                 Only matches files, not directories. If left empty, all non-ignored files will be included.
             max_results: Maximum number of results. Defaults to config max_results_default when not set.
             case_sensitive: Case-sensitive matching. Defaults to False.
             whole_word: Match whole words only. Defaults to False.
