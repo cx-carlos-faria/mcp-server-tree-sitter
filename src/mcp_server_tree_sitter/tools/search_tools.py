@@ -15,7 +15,7 @@ def register_search_tools(mcp_server: FastMCP) -> None:
         project: str,
         pattern: str,
         file_pattern: str | None = None,
-        max_results: int = 100,
+        max_results: int | None = None,
         case_sensitive: bool = False,
         whole_word: bool = False,
         use_regex: bool = False,
@@ -27,7 +27,7 @@ def register_search_tools(mcp_server: FastMCP) -> None:
             project: Name of the registered project.
             pattern: Text pattern to search for.
             file_pattern: Glob to restrict files (e.g. '**/*.py'). Defaults to None (all files).
-            max_results: Maximum number of results. Defaults to 100 (or config max_results_default).
+            max_results: Maximum number of results. Defaults to config max_results_default when not set.
             case_sensitive: Case-sensitive matching. Defaults to False.
             whole_word: Match whole words only. Defaults to False.
             use_regex: Treat pattern as regex. Defaults to False.
@@ -98,7 +98,7 @@ def register_search_tools(mcp_server: FastMCP) -> None:
         query: str,
         file_path: str | None = None,
         language: str | None = None,
-        max_results: int = 100,
+        max_results: int | None = None,
     ) -> list[QueryMatchResult]:
         """Run a tree-sitter query on project files. Provide file_path (single file) or language (all matching files).
 
@@ -108,7 +108,7 @@ def register_search_tools(mcp_server: FastMCP) -> None:
             file_path: Optional single file to query. Defaults to None.
             language: Language when querying multiple files. Defaults to None.
                 Either file_path or language must be set when not querying a single file.
-            max_results: Maximum number of results. Defaults to 100 (or config max_results_default).
+            max_results: Maximum number of results. Defaults to config max_results_default when not set.
 
         Returns:
             List of query match objects (captures, path, range).

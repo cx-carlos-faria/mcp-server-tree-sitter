@@ -67,6 +67,7 @@ def mock_container() -> MagicMock:
     mock_config.language = MagicMock()
     mock_config.language.default_max_depth = 5
     mock_config.log_level = "INFO"
+    mock_config.max_results_default = 100
     container.config_manager.get_config.return_value = mock_config
 
     return container
