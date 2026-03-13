@@ -72,6 +72,7 @@ class NodeProtocol(Protocol):
     def children_by_field_name(self) -> dict[str, list[NodeProtocol]]: ...
 
     def walk(self) -> CursorProtocol: ...
+    def descendant_for_point_range(self, start_point: tuple[int, int], end_point: tuple[int, int]) -> NodeProtocol: ...
 
 
 class CursorProtocol(Protocol):
@@ -190,6 +191,9 @@ except ImportError:
 
         def walk(self) -> DummyTreeCursor:
             return DummyTreeCursor()
+
+        def descendant_for_point_range(self, start_point: tuple[int, int], end_point: tuple[int, int]) -> DummyNode:
+            return self
 
     class DummyTreeCursor:
         """Dummy implementation when tree-sitter is not available."""
