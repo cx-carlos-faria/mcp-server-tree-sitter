@@ -10,8 +10,8 @@ import pytest
 
 from mcp_server_tree_sitter.config import (
     ConfigurationManager,
-    load_config_from_file,
     ServerConfig,
+    load_config_from_file,
 )
 
 

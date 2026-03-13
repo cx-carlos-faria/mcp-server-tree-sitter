@@ -13,7 +13,6 @@ from ..utils.tree_sitter_helpers import (
     walk_tree,
 )
 from ..utils.tree_sitter_types import Node, ensure_node
-
 from .ast_cursor import node_to_dict_cursor
 
 logger = logging.getLogger(__name__)

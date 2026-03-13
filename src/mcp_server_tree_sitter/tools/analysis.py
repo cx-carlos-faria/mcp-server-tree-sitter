@@ -10,8 +10,6 @@ from collections import Counter
 from typing import TypedDict
 
 from ..exceptions import SecurityError
-
-logger = logging.getLogger(__name__)
 from ..language.registry import LanguageRegistry
 from ..models.project import Project
 from ..utils.context import MCPContext, MCPContextProtocol
@@ -21,6 +19,8 @@ from ..utils.tree_sitter_helpers import ensure_language, parse_with_cached_tree
 from .dependencies import find_dependencies
 from .metrics import compute_cyclomatic_complexity, count_lines_and_comments
 from .symbol_extraction import extract_symbols
+
+logger = logging.getLogger(__name__)
 
 
 class _EntryPoint(TypedDict):

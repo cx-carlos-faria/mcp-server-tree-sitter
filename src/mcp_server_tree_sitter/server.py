@@ -5,7 +5,7 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 from .api import get_config, get_config_manager, get_tree_cache
-from .app import App, get_app
+from .app import App
 from .bootstrap import get_logger, update_log_levels
 from .config import ConfigDict, ServerConfig
 

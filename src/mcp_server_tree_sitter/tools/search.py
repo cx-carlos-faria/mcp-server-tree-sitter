@@ -7,13 +7,13 @@ from pathlib import Path
 from typing import TypedDict
 
 from ..cache.parser_cache import TreeCache
-
-logger = logging.getLogger(__name__)
 from ..exceptions import QueryError, SecurityError
 from ..language.registry import LanguageRegistry
 from ..models.project import Project
 from ..utils.security import validate_file_access
 from ..utils.tree_sitter_helpers import run_query_captures
+
+logger = logging.getLogger(__name__)
 
 
 class _ContextLine(TypedDict):

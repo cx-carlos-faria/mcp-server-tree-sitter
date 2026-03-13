@@ -8,13 +8,13 @@ from mcp.server.fastmcp import FastMCP
 
 from ..api import get_language_registry, get_project_registry
 from ..bootstrap import get_logger
-
-logger = get_logger(__name__)
 from .analysis_tools import register_analysis_tools
 from .ast_tools import register_ast_tools
 from .file_tools import register_file_tools
 from .project_tools import register_project_tools
 from .search_tools import register_search_tools
+
+logger = get_logger(__name__)
 
 
 def register_tools(mcp_server: FastMCP) -> None:

@@ -5,8 +5,6 @@ from collections.abc import Generator
 from typing import Any
 
 from ..exceptions import SecurityError
-
-logger = logging.getLogger(__name__)
 from ..language.import_enrichers import get_symbol_import_enricher
 from ..language.loader import get_default_symbol_types
 from ..language.query_templates import get_query_template
@@ -21,6 +19,8 @@ from ..utils.tree_sitter_helpers import (
     run_query_captures,
 )
 from ..utils.tree_sitter_types import Node, Tree
+
+logger = logging.getLogger(__name__)
 
 
 def _node_location(node: Node) -> dict[str, Any]:

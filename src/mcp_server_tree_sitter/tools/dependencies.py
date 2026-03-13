@@ -4,8 +4,6 @@ import logging
 from collections import defaultdict
 
 from ..exceptions import SecurityError
-
-logger = logging.getLogger(__name__)
 from ..language.import_enrichers import get_dependency_module_enricher
 from ..language.query_templates import get_query_template
 from ..language.registry import LanguageRegistry
@@ -19,6 +17,8 @@ from ..utils.tree_sitter_helpers import (
     run_query_captures,
 )
 from ..utils.tree_sitter_types import Node
+
+logger = logging.getLogger(__name__)
 
 
 def find_dependencies(
