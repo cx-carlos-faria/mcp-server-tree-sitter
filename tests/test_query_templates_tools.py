@@ -1,6 +1,8 @@
-"""Functional tests for list_query_templates_tool (and get_query_template_tool in task 4)."""
+"""Functional tests for list_query_templates_tool and get_query_template_tool."""
 
-from tests.test_helpers import list_query_templates_tool
+import pytest
+
+from tests.test_helpers import get_query_template_tool, list_query_templates_tool
 
 # ---- list_query_templates_tool ----
 
@@ -42,3 +44,42 @@ def test_list_query_templates_tool_handles_unregistered_language() -> None:
     assert isinstance(result, dict)
     assert "unregistered_lang_xyz_123" in result
     assert result["unregistered_lang_xyz_123"] == {}
+
+
+# ---- get_query_template_tool ----
+
+
+def test_get_query_template_tool_valid_fetch() -> None:
+    """Valid language and template name returns dict with language, name, and query."""
+    result = get_query_template_tool("python", "functions")
+    assert isinstance(result, dict)
+    assert result["language"] == "python"
+    assert result["name"] == "functions"
+    assert "query" in result
+    assert isinstance(result["query"], str)
+    assert len(result["query"].strip()) > 0
+
+
+def test_get_query_template_tool_invalid_language() -> None:
+    """Invalid (unregistered) language raises ValueError."""
+    with pytest.raises(ValueError) as exc_info:
+        get_query_template_tool("invalid_language_xyz", "functions")
+    assert "invalid_language_xyz" in str(exc_info.value)
+    assert "functions" in str(exc_info.value) or "template" in str(exc_info.value).lower()
+
+
+def test_get_query_template_tool_invalid_template_name() -> None:
+    """Valid language but invalid template name raises ValueError."""
+    with pytest.raises(ValueError) as exc_info:
+        get_query_template_tool("python", "nonexistent_template_name")
+    assert "python" in str(exc_info.value)
+    assert "nonexistent_template_name" in str(exc_info.value)
+
+
+def test_get_query_template_tool_template_content_correctness() -> None:
+    """Returned query string has expected tree-sitter structure (node types, captures)."""
+    result = get_query_template_tool("python", "functions")
+    query = result["query"]
+    assert "function_definition" in query
+    assert "identifier" in query or "@" in query
+    assert "(" in query and ")" in query
