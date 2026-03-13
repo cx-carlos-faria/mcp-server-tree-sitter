@@ -43,11 +43,12 @@ def search_text(
     project: Project,
     pattern: str,
     file_pattern: str | None = None,
-    max_results: int = 100,
+    max_results: int = 20,
     case_sensitive: bool = False,
     whole_word: bool = False,
     use_regex: bool = False,
-    context_lines: int = 0,
+    context_lines: int = 1,
+    max_line_length: int = 500,
 ) -> list[TextMatchResult]:
     """
     Search for text pattern in project files.
@@ -61,6 +62,7 @@ def search_text(
         whole_word: Whether to match whole words only
         use_regex: Whether to treat pattern as a regular expression
         context_lines: Number of context lines to include before/after matches
+        max_line_length: Maximum length of lines in results (truncated with "...")
 
     Returns:
         List of matches with file, line number, and text
@@ -110,7 +112,8 @@ def search_text(
                     if pending:
                         done_indices = []
                         for idx, entry in enumerate(pending):
-                            entry[2].append(stripped)
+                            truncated_line = stripped[:max_line_length] + ("..." if len(stripped) > max_line_length else "")
+                            entry[2].append(truncated_line)
                             entry[1] -= 1
                             if entry[1] == 0:
                                 done_indices.append(idx)
@@ -131,11 +134,16 @@ def search_text(
                         is_match = pattern in line.lower()
 
                     if is_match:
+                        truncated_text = stripped[:max_line_length] + ("..." if len(stripped) > max_line_length else "")
+                        truncated_context_before = [
+                            t[:max_line_length] + ("..." if len(t) > max_line_length else "") 
+                            for _, t in pre_ctx
+                        ]
                         result = TextMatchResult(
                             file=str(file_path.relative_to(root)),
                             line=i,
-                            text=stripped,
-                            context_before=[t for _, t in pre_ctx],
+                            text=truncated_text,
+                            context_before=truncated_context_before,
                             context_after=[],
                         )
                         if context_lines > 0:

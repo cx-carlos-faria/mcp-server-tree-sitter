@@ -72,7 +72,7 @@ def get_file_content(
     project: Project,
     path: str,
     as_bytes: bool = False,
-    max_lines: int | None = None,
+    max_lines: int | None = 1000,
     start_line: int = 0,
 ) -> str | bytes:
     """
@@ -82,7 +82,7 @@ def get_file_content(
         project: Project object
         path: Path to the file, relative to project root
         as_bytes: Whether to return raw bytes instead of string
-        max_lines: Maximum number of lines to return
+        max_lines: Maximum number of lines to return (default 1000)
         start_line: First line to include (0-based)
 
     Returns:
