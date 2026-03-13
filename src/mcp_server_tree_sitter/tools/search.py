@@ -59,11 +59,11 @@ def search_text(
         project: Project object
         pattern: Text pattern to search for
         file_pattern: Optional glob pattern to filter files (e.g. "**/*.py")
-        max_results: Maximum number of results to return
-        case_sensitive: Whether to do case-sensitive matching
-        whole_word: Whether to match whole words only
-        use_regex: Whether to treat pattern as a regular expression
-        context_lines: Number of context lines to include before/after matches
+        max_results: Maximum number of results to return (defaults to 100)
+        case_sensitive: Whether to do case-sensitive matching (defaults to False)
+        whole_word: Whether to match whole words only (defaults to False)
+        use_regex: Whether to treat pattern as a regular expression (defaults to False)
+        context_lines: Number of context lines to include before/after matches (defaults to 0)
 
     Returns:
         List of matches with file, line number, and text
