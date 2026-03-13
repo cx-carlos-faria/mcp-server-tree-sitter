@@ -98,49 +98,43 @@ def search_text(
             validate_file_access(file_path, root)
 
             with open(file_path, encoding="utf-8", errors="replace") as f:
-                lines = f.readlines()
+                # Only buffer all lines when context look-ahead/look-behind is needed
+                lines = f.readlines() if context_lines > 0 else None
+                line_source = lines if lines is not None else f
 
-            for i, line in enumerate(lines, 1):
-                match = False
+                for i, line in enumerate(line_source, 1):
+                    if pattern_obj:
+                        match = bool(pattern_obj.search(line))
+                    elif case_sensitive:
+                        match = pattern in line
+                    else:
+                        match = pattern in line.lower()
 
-                if pattern_obj:
-                    # Using regex pattern
-                    match_result = pattern_obj.search(line)
-                    match = bool(match_result)
-                elif case_sensitive:
-                    # Simple case-sensitive search - check both original and stripped versions
-                    match = pattern in line or pattern.strip() in line.strip()
-                else:
-                    # Simple case-insensitive search - check both original and stripped versions
-                    line_lower = line.lower()
-                    pattern_lower = pattern.lower()
-                    match = pattern_lower in line_lower or pattern_lower.strip() in line_lower.strip()
+                    if match:
+                        context: list[_ContextLine] = []
+                        if context_lines > 0 and lines is not None:
+                            start = max(0, i - 1 - context_lines)
+                            end = min(len(lines), i + context_lines)
+                            context = [
+                                _ContextLine(
+                                    line=ctx_i + 1,
+                                    text=lines[ctx_i].rstrip("\n"),
+                                    is_match=(ctx_i == i - 1),
+                                )
+                                for ctx_i in range(start, end)
+                            ]
 
-                if match:
-                    # Calculate context lines
-                    start = max(0, i - 1 - context_lines)
-                    end = min(len(lines), i + context_lines)
-
-                    context = [
-                        _ContextLine(
-                            line=ctx_i + 1,
-                            text=lines[ctx_i].rstrip("\n"),
-                            is_match=(ctx_i == i - 1),
+                        file_results.append(
+                            TextMatchResult(
+                                file=str(file_path.relative_to(root)),
+                                line=i,
+                                text=line.rstrip("\n"),
+                                context=context,
+                            )
                         )
-                        for ctx_i in range(start, end)
-                    ]
 
-                    file_results.append(
-                        TextMatchResult(
-                            file=str(file_path.relative_to(root)),
-                            line=i,
-                            text=line.rstrip("\n"),
-                            context=context,
-                        )
-                    )
-
-                    if len(file_results) >= max_results:
-                        break
+                        if len(file_results) >= max_results:
+                            break
         except Exception as e:
             logger.debug("Skipping file that could not be read: %s: %s", file_path, e)
 

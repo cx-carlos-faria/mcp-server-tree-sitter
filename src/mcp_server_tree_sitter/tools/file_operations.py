@@ -1,8 +1,9 @@
 """File operation tools for MCP server."""
 
+import itertools
 import logging
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from ..exceptions import FileAccessError, ProjectError
 from ..models.project import Project
@@ -110,27 +111,19 @@ def get_file_content(
 
     try:
         need_slice = start_line > 0 or max_lines is not None
-        lines: list[str] | list[bytes]
 
         if as_bytes:
             with open(file_path, "rb") as f:
                 if not need_slice:
                     return f.read()
-                lines = f.readlines()
+                stop = start_line + max_lines if max_lines is not None else None
+                return b"".join(itertools.islice(f, start_line, stop))
         else:
             with open(file_path, encoding="utf-8", errors="replace") as f:
                 if not need_slice:
                     return f.read()
-                lines = f.readlines()
-
-        n = len(lines)
-        start_idx = min(start_line, n)
-        end_idx = min(start_idx + max_lines, n) if max_lines is not None else n
-        chunk = lines[start_idx:end_idx]
-
-        if as_bytes:
-            return b"".join(cast(list[bytes], chunk))
-        return "".join(cast(list[str], chunk))
+                stop = start_line + max_lines if max_lines is not None else None
+                return "".join(itertools.islice(f, start_line, stop))
 
     except FileNotFoundError as e:
         raise FileAccessError(f"File not found: {path}") from e
