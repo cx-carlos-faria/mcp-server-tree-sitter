@@ -64,7 +64,8 @@ def _register_prompts(mcp_server: FastMCP) -> None:
                 for cls in symbols["classes"]:
                     structure += f"- {cls['name']}\n"
         except Exception as e:
-            logger.debug("Symbol extraction failed for code_review prompt: %s", e)
+            logger.warning("Symbol extraction failed for code_review prompt: %s", e)
+            structure = "\n(Structure could not be extracted; reviewing code only.)"
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_code_review_prompt(text, language, structure)
@@ -112,7 +113,8 @@ def _register_prompts(mcp_server: FastMCP) -> None:
             - Cyclomatic complexity: {complexity["cyclomatic_complexity"]}
             """
         except Exception as e:
-            logger.debug("Complexity analysis failed for suggest_improvements prompt: %s", e)
+            logger.warning("Complexity analysis failed for suggest_improvements prompt: %s", e)
+            complexity_info = "\n(Code metrics could not be computed.)"
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
         return build_suggest_improvements_prompt(text, language, complexity_info)
@@ -141,7 +143,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
                 else "None detected"
             )
         except Exception as e:
-            logger.debug("Project structure analysis failed for project_overview prompt: %s", e)
+            logger.warning("Project structure analysis failed for project_overview prompt: %s", e)
             languages_str = "Error analyzing languages"
             entry_points_str = "Error detecting entry points"
             build_files_str = "Error detecting build files"
