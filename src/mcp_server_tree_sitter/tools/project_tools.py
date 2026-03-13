@@ -9,11 +9,11 @@ from mcp.server.fastmcp import FastMCP
 from ..api import get_config_manager, get_language_registry, get_project_registry, get_tree_cache
 from ..cache.parser_cache import TreeCache
 from ..config import (
-    ConfigurationManager,
     DEFAULT_LOG_LEVEL,
     DEFAULT_MAX_FILE_SIZE_MB,
     VALID_LOG_LEVELS,
     ConfigDict,
+    ConfigurationManager,
 )
 from ..exceptions import ProjectError
 

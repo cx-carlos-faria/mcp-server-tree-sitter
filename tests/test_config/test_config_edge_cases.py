@@ -116,12 +116,18 @@ def test_configure_invalid_log_level_uses_default() -> None:
 
 def test_configure_max_file_size_mb_zero_or_negative_uses_default() -> None:
     """max_file_size_mb=0 or negative is rejected; default value is used and logged."""
+    from mcp_server_tree_sitter.app import get_app
     from tests.test_helpers import configure
+
+    # Ensure current value is invalid so the "use default" path is taken (not "keep current").
+    app = get_app()
+    app.config_manager.update_value("security.max_file_size_mb", 0)
 
     result_zero = configure(max_file_size_mb=0)
     assert result_zero["security"]["max_file_size_mb"] == DEFAULT_MAX_FILE_SIZE_MB, (
         "Zero must fall back to default"
     )
+    app.config_manager.update_value("security.max_file_size_mb", 0)
     result_neg = configure(max_file_size_mb=-1)
     assert result_neg["security"]["max_file_size_mb"] == DEFAULT_MAX_FILE_SIZE_MB, (
         "Negative must fall back to default"

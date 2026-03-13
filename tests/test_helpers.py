@@ -39,7 +39,6 @@ from mcp_server_tree_sitter.tools.ast_operations import find_node_at_position as
 from mcp_server_tree_sitter.tools.ast_operations import get_enclosing_scope_for_path
 from mcp_server_tree_sitter.tools.ast_operations import get_file_ast as ast_get_file_ast
 from mcp_server_tree_sitter.tools.debug import diagnose_yaml_config
-from mcp_server_tree_sitter.tools.project_tools import apply_configure
 from mcp_server_tree_sitter.tools.file_operations import (
     get_file_content,
     get_file_info,
@@ -48,6 +47,7 @@ from mcp_server_tree_sitter.tools.file_operations import (
 from mcp_server_tree_sitter.tools.project import (
     register_project as api_register_project,
 )
+from mcp_server_tree_sitter.tools.project_tools import apply_configure
 from mcp_server_tree_sitter.tools.query_builder import (
     adapt_query_for_language,
     build_compound_query,
