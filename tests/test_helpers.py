@@ -34,6 +34,7 @@ from mcp_server_tree_sitter.tools.analysis import (
 from mcp_server_tree_sitter.tools.ast_operations import find_node_at_position as ast_find_node_at_position
 from mcp_server_tree_sitter.tools.ast_operations import get_enclosing_scope_for_path
 from mcp_server_tree_sitter.tools.ast_operations import get_file_ast as ast_get_file_ast
+from mcp_server_tree_sitter.tools.debug import diagnose_yaml_config
 from mcp_server_tree_sitter.tools.file_operations import (
     get_file_content,
     get_file_info,
@@ -47,7 +48,7 @@ from mcp_server_tree_sitter.tools.query_builder import (
     build_compound_query,
     describe_node_types,
 )
-from mcp_server_tree_sitter.tools.search import query_code, search_text
+from mcp_server_tree_sitter.tools.search import QueryMatchResult, query_code, search_text
 from mcp_server_tree_sitter.utils.context import MCPContextProtocol
 
 
@@ -424,7 +425,7 @@ def find_usage(
     symbol: str,
     file_path: str | None = None,
     language: str | None = None,
-) -> list[dict[str, Any]]:
+) -> list[QueryMatchResult]:
     """Find usage of a symbol."""
     project_registry = get_project_registry()
     language_registry = get_language_registry()
@@ -452,6 +453,11 @@ def find_usage(
 def clear_cache(project: str | None = None, file_path: str | None = None) -> dict[str, str]:
     """Clear the parse tree cache."""
     return api_clear_cache(project, file_path)
+
+
+def diagnose_config(config_path: str) -> dict[str, Any]:
+    """Run diagnostics on a YAML config file (same as diagnose_config tool)."""
+    return diagnose_yaml_config(config_path)
 
 
 # Server configuration
