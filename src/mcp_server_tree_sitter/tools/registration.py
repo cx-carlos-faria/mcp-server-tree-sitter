@@ -29,7 +29,14 @@ def register_tools(mcp_server: FastMCP) -> None:
 
 
 def _register_prompts(mcp_server: FastMCP) -> None:
-    """Register all prompt templates. Prompts use get_app() at call time."""
+    """Register all prompt templates. Prompts use get_app() at call time; bodies live in prompts.mcp_prompts."""
+    from ..prompts.mcp_prompts import (
+        build_code_review_prompt,
+        build_explain_code_prompt,
+        build_explain_tree_sitter_query_prompt,
+        build_project_overview_prompt,
+        build_suggest_improvements_prompt,
+    )
 
     @mcp_server.prompt()
     def code_review(project: str, file_path: str) -> str:
@@ -45,12 +52,10 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         structure = ""
         try:
             symbols = extract_symbols(project_obj, file_path, app.language_registry)
-
             if symbols.get("functions"):
                 structure += "\nFunctions:\n"
                 for func in symbols["functions"]:
                     structure += f"- {func['name']}\n"
-
             if symbols.get("classes"):
                 structure += "\nClasses:\n"
                 for cls in symbols["classes"]:
@@ -59,21 +64,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
             pass
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
-        return f"""
-        Please review this {language} code file:
-
-        ```{language}
-        {text}
-        ```
-
-        {structure}
-
-        Focus on:
-        1. Code clarity and organization
-        2. Potential bugs or issues
-        3. Performance considerations
-        4. Best practices for {language}
-        """
+        return build_code_review_prompt(text, language, structure)
 
     @mcp_server.prompt()
     def explain_code(project: str, file_path: str, focus: str | None = None) -> str:
@@ -84,48 +75,13 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         project_obj = app.project_registry.get_project(project)
         content = get_file_content(project_obj, file_path)
         language = app.language_registry.language_for_file(file_path)
-
-        focus_prompt = ""
-        if focus:
-            focus_prompt = f"\nPlease focus specifically on explaining: {focus}"
-
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
-        return f"""
-        Please explain this {language} code file:
-
-        ```{language}
-        {text}
-        ```
-
-        Provide a clear explanation of:
-        1. What this code does
-        2. How it's structured
-        3. Any important patterns or techniques used
-        {focus_prompt}
-        """
+        return build_explain_code_prompt(text, language, focus)
 
     @mcp_server.prompt()
     def explain_tree_sitter_query() -> str:
         """Create a prompt explaining tree-sitter query syntax"""
-        return """
-        Tree-sitter queries use S-expression syntax to match patterns in code.
-
-        Basic query syntax:
-        - `(node_type)` - Match nodes of a specific type
-        - `(node_type field: (child_type))` - Match nodes with specific field relationships
-        - `@name` - Capture a node with a name
-        - `#predicate` - Apply additional constraints
-
-        Example query for Python functions:
-        ```
-        (function_definition
-          name: (identifier) @function.name
-          parameters: (parameters) @function.params
-          body: (block) @function.body) @function.def
-        ```
-
-        Please write a tree-sitter query to find:
-        """
+        return build_explain_tree_sitter_query_prompt()
 
     @mcp_server.prompt()
     def suggest_improvements(project: str, file_path: str) -> str:
@@ -138,6 +94,7 @@ def _register_prompts(mcp_server: FastMCP) -> None:
         content = get_file_content(project_obj, file_path)
         language = app.language_registry.language_for_file(file_path)
 
+        complexity_info = ""
         try:
             complexity = analyze_code_complexity(project_obj, file_path, app.language_registry)
             complexity_info = f"""
@@ -152,26 +109,10 @@ def _register_prompts(mcp_server: FastMCP) -> None:
             - Cyclomatic complexity: {complexity["cyclomatic_complexity"]}
             """
         except Exception:
-            complexity_info = ""
+            pass
 
         text = content.decode(errors="replace") if isinstance(content, bytes) else content
-        return f"""
-        Please suggest improvements for this {language} code:
-
-        ```{language}
-        {text}
-        ```
-
-        {complexity_info}
-
-        Suggest specific, actionable improvements for:
-        1. Code quality and readability
-        2. Performance optimization
-        3. Error handling and robustness
-        4. Following {language} best practices
-
-        Where possible, provide code examples of your suggestions.
-        """
+        return build_suggest_improvements_prompt(text, language, complexity_info)
 
     @mcp_server.prompt()
     def project_overview(project: str) -> str:
@@ -183,44 +124,28 @@ def _register_prompts(mcp_server: FastMCP) -> None:
 
         try:
             analysis = analyze_project_structure(project_obj, app.language_registry)
-
-            languages_str = "\n".join(f"- {lang}: {count} files" for lang, count in analysis["languages"].items())
-
+            languages_str = "\n".join(
+                f"- {lang}: {count} files" for lang, count in analysis["languages"].items()
+            )
             entry_points_str = (
                 "\n".join(f"- {entry['path']} ({entry['language']})" for entry in analysis["entry_points"])
                 if analysis["entry_points"]
                 else "None detected"
             )
-
             build_files_str = (
                 "\n".join(f"- {file['path']} ({file['type']})" for file in analysis["build_files"])
                 if analysis["build_files"]
                 else "None detected"
             )
-
         except Exception:
             languages_str = "Error analyzing languages"
             entry_points_str = "Error detecting entry points"
             build_files_str = "Error detecting build files"
 
-        return f"""
-        Please analyze this codebase:
-
-        Project name: {project_obj.name}
-        Path: {project_obj.root_path}
-
-        Languages:
-        {languages_str}
-
-        Possible entry points:
-        {entry_points_str}
-
-        Build configuration:
-        {build_files_str}
-
-        Based on this information, please:
-        1. Provide an overview of what this project seems to be
-        2. Identify the main components and their relationships
-        3. Suggest where to start exploring the codebase
-        4. Identify any patterns or architectural approaches used
-        """
+        return build_project_overview_prompt(
+            project_obj.name,
+            str(project_obj.root_path),
+            languages_str,
+            entry_points_str,
+            build_files_str,
+        )
