@@ -28,10 +28,12 @@ from mcp_server_tree_sitter.language.query_templates import (
 )
 from mcp_server_tree_sitter.tools import prompt_handlers as _prompt_handlers
 from mcp_server_tree_sitter.tools.analysis import (
+    ComplexityResult,
+    ProjectStructureResult,
     analyze_code_complexity,
     analyze_project_structure,
     extract_symbols,
-    find_dependencies, ProjectStructureResult, ComplexityResult,
+    find_dependencies,
 )
 from mcp_server_tree_sitter.tools.ast_operations import find_node_at_position as ast_find_node_at_position
 from mcp_server_tree_sitter.tools.ast_operations import get_enclosing_scope_for_path
