@@ -10,7 +10,6 @@ from typing import Any
 from ..language.scope_node_types import get_enclosure_node_types, node_type_to_kind
 from ..utils.tree_sitter_helpers import (
     get_node_text,
-    walk_tree,
 )
 from ..utils.tree_sitter_types import Node, ensure_node
 from .ast_cursor import node_to_dict_cursor

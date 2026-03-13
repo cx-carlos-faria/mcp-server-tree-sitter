@@ -192,6 +192,9 @@ except ImportError:
         def walk(self) -> DummyTreeCursor:
             return DummyTreeCursor()
 
+        def descendant_for_point_range(self, start_point: tuple[int, int], end_point: tuple[int, int]) -> DummyNode:
+            return self
+
     class DummyTreeCursor:
         """Dummy implementation when tree-sitter is not available."""
 
