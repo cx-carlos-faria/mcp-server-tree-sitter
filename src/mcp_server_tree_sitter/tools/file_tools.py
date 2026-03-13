@@ -15,7 +15,7 @@ def register_file_tools(mcp_server: FastMCP) -> None:
     def list_files(
         project: str,
         pattern: str | None = None,
-        max_depth: int | None = None,
+        max_depth: int | None = 4,
         extensions: list[str] | None = None,
     ) -> list[str]:
         """List file paths in a registered project (relative to project root).
@@ -23,7 +23,7 @@ def register_file_tools(mcp_server: FastMCP) -> None:
         Args:
             project: Name of the registered project.
             pattern: Glob pattern (e.g. '**/*.py'). Defaults to '**/*' (all files).
-            max_depth: Maximum directory depth. Defaults to None (no limit).
+            max_depth: Maximum directory depth. Defaults to 4 (None is no limit).
             extensions: File extensions to include, without dot (e.g. ['py', 'js']). Defaults to None (all).
 
         Returns:
